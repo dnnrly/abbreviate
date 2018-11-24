@@ -6,7 +6,9 @@ Shorten your strings using common abbreviations.
 
 
 ```bash
-go get github.com/dnnrly/abbreviate/abbreviate
+go get github.com/gobuffalo/packr/v2/packr2
+go get github.com/dnnrly/abbreviate
+packr2 install github.com/dnnrly/abbreviate
 ```
 
 ## Usage
