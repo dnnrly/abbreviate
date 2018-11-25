@@ -60,6 +60,7 @@ Word boundaries will detected using title case and non-letter`,
 				parts := strings.Split(v, "/")
 				fmt.Printf("--language %s --set %s\n", parts[0], parts[1])
 			}
+			os.Exit(0)
 		}
 
 		path := fmt.Sprintf("%s/%s", optLanguage, optSet)
