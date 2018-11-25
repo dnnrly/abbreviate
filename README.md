@@ -11,9 +11,8 @@ Shorten your strings using common abbreviations.
 
 
 ```bash
-go get github.com/gobuffalo/packr/v2/packr2
 go get github.com/dnnrly/abbreviate
-packr2 install github.com/dnnrly/abbreviate
+make build
 ```
 
 ## Usage
@@ -36,8 +35,17 @@ Flags:
   -s, --set string        Abbreviation set (default "common")
 ```
 
+Examples:
+```
+$ abbreviate strategy-limited
+stg-ltd
+
+$ abbreviate strategy-limited --max 11
+strategy-ltd
+```
+
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. See the [contributing guide](CONTRIBUTING.md) for more details.
 
 Please make sure to update tests as appropriate.
 
