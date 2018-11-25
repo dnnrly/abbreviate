@@ -32,6 +32,7 @@ Flags:
   -l, --language string   Language to select (default "en-us")
       --list              List all abbreviate sets by language
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
+  -n, --newline           Add newline to the end of the string (default true)
   -s, --set string        Abbreviation set (default "common")
 ```
 
