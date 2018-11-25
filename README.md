@@ -45,6 +45,9 @@ $ abbreviate strategy-limited --max 11
 strategy-ltd
 ```
 
+## Code of Conduct
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
 ## Contributing
 Pull requests are welcome. See the [contributing guide](CONTRIBUTING.md) for more details.
 
