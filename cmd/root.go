@@ -22,6 +22,8 @@ import (
 	"github.com/gobuffalo/packr/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/dnnrly/abbreviate/domain"
 )
 
 var (
@@ -41,7 +43,7 @@ var rootCmd = &cobra.Command{
 	Long: `This tool will attempt to shorten the string provided using common abbreviations
 specified by language and 'set'.
 
-Word boundaries will detect camel case and non-letter`,
+Word boundaries will detected using title case and non-letter`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if !optList && len(args) != 1 {
 			return errors.New("requires a string to abbreviate")
@@ -58,6 +60,23 @@ Word boundaries will detect camel case and non-letter`,
 				fmt.Printf("--language %s --set %s\n", parts[0], parts[1])
 			}
 		}
+
+		path := fmt.Sprintf("%s/%s", optLanguage, optSet)
+		all, err := data.FindString(path)
+		if err != nil {
+			fmt.Fprintf(
+				os.Stderr,
+				"Unable to find language '%s' with set '%s'.\n",
+				optLanguage,
+				optSet,
+			)
+			os.Exit(1)
+		}
+
+		matcher := domain.NewMatcherFromString(all)
+		abbr := domain.ShortenFromBack(matcher, args[0], optMax)
+
+		fmt.Printf("%s", abbr)
 	},
 }
 
