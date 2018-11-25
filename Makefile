@@ -2,6 +2,9 @@ CURL_BIN ?= curl
 GO_BIN ?= go
 LINT_BIN ?= gometalinter
 PACKR_BIN ?= packr2
+GORELEASER_BIN ?= goreleaser
+
+PUBLISH_PARAM ?=
 
 export PATH := ./bin:$(PATH)
 
@@ -9,6 +12,11 @@ install: deps
 
 build:
 	$(PACKR_BIN) build
+
+clean:
+	$(PACKR_BIN) clean
+	rm -f abbreviate
+	rm -rf dist
 
 deps:
 	$(GO_BIN) get ./...
@@ -26,6 +34,9 @@ ci-test:
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
+
+release: clean build
+	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
 	$(GO_BIN) get -u -tags ${TAGS}

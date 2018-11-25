@@ -5,6 +5,8 @@
 *.so
 *.dylib
 bin/
+dist/
+abbreviate
 
 # packr
 packrd/
