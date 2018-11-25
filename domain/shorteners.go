@@ -27,8 +27,8 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 
 	shortened := ""
 	word := ""
-	for pos := len(original) - 1; pos >= 0; pos-- {
-		ch := []rune(original)[pos]
+	for len(original) > 0 && len(original)+len(word)+len(shortened) > max {
+		remaining, ch := lastChar(original)
 		if unicode.IsLetter(ch) {
 			word = string(ch) + word
 			if unicode.IsUpper(ch) {
@@ -37,9 +37,6 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 				abbr = strings.Title(abbr)
 				shortened = abbr + shortened
 				word = ""
-			} else if pos == 0 {
-				abbr := matcher.Match(word)
-				shortened = abbr + shortened
 			}
 		} else {
 			if word != "" {
@@ -49,12 +46,26 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 			}
 			shortened = string(ch) + shortened
 		}
-
-		if len(shortened)+pos <= max {
-			shortened = original[0:pos-1] + shortened
-			break
-		}
+		original = remaining
 	}
+	if len(original)+len(shortened) > max {
+		word = matcher.Match(word)
+	}
+	shortened = original + word + shortened
 
 	return shortened
+}
+
+func lastChar(str string) (string, rune) {
+	l := len(str)
+
+	switch l {
+	case 0:
+		return "", rune(0)
+
+	case 1:
+		return "", []rune(str)[0]
+	}
+
+	return str[0 : l-1], []rune(str)[l-1:][0]
 }

@@ -5,6 +5,7 @@ PACKR_BIN ?= packr2
 GORELEASER_BIN ?= goreleaser
 
 PUBLISH_PARAM ?=
+TMP_DIR=/tmp
 
 export PATH := ./bin:$(PATH)
 
@@ -19,6 +20,8 @@ clean:
 	rm -rf dist
 
 deps:
+	git clone https://github.com/sstephenson/bats.git ./tmp/bats
+	./tmp/bats/install.sh .
 	$(GO_BIN) get ./...
 	$(GO_BIN) get github.com/gobuffalo/packr/v2/packr2
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
@@ -29,13 +32,16 @@ endif
 test:
 	$(GO_BIN) test ./...
 
-ci-test:
+acceptance-test:
+	bats --tap acceptance.bats
+
+ci-test: acceptance-test
 	$(GO_BIN) test -race  -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
 
-release: clean build
+release: clean build acceptance-test
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
