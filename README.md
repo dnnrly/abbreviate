@@ -2,6 +2,11 @@
 
 Shorten your strings using common abbreviations.
 
+[![build status](https://travis-ci.org/dnnrly/abbreviate.svg?branch=master)](https://travis-ci.org/dnnrly/abbreviate)
+[![codecov](https://codecov.io/gh/dnnrly/abbreviate/branch/master/graph/badge.svg)](https://codecov.io/gh/dnnrly/abbreviate)
+[![godoc](https://godoc.org/github.com/dnnrly/abbreviate?status.svg)](http://godoc.org/github.com/dnnrly/abbreviate)
+[![report card](https://goreportcard.com/badge/github.com/dnnrly/abbreviate)](https://goreportcard.com/report/github.com/dnnrly/abbreviate)
+
 ## Installation
 
 
