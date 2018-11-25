@@ -28,6 +28,7 @@ import (
 
 var (
 	optList     = false
+	optNewline  = true
 	optLanguage = "en-us"
 	optSet      = "common"
 	optCustom   = ""
@@ -77,6 +78,9 @@ Word boundaries will detected using title case and non-letter`,
 		abbr := domain.ShortenFromBack(matcher, args[0], optMax)
 
 		fmt.Printf("%s", abbr)
+		if optNewline {
+			fmt.Printf("\n")
+		}
 	},
 }
 
@@ -91,6 +95,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolVarP(&optList, "list", "", optList, "List all abbreviate sets by language")
+	rootCmd.Flags().BoolVarP(&optNewline, "newline", "n", optNewline, "Add newline to the end of the string")
 	rootCmd.Flags().StringVarP(&optLanguage, "language", "l", optLanguage, "Language to select")
 	rootCmd.Flags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
 	rootCmd.Flags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
