@@ -13,6 +13,51 @@ const (
 	betweenWords
 )
 
+type Sequences []string
+
+func NewSequences(original string) Sequences {
+	seq := Sequences{""}
+	for len(original) > 0 {
+		remaining, ch := lastChar(original)
+		if seq[0] == "" {
+			seq[0] = string(ch) + seq[0]
+		} else if unicode.IsLetter(ch) && unicode.IsLetter(first(seq[0])) {
+			seq[0] = string(ch) + seq[0]
+			if isTitleCase(seq[0]) {
+				seq.AddFront("")
+			}
+		} else {
+			seq.AddFront(string(ch))
+		}
+		original = remaining
+	}
+
+	return seq
+}
+
+func (all Sequences) String() string {
+	str := ""
+	for _, s := range all {
+		str += s
+	}
+
+	return str
+}
+
+func (all *Sequences) AddFront(str string) {
+	initial := Sequences{str}
+	*all = append(initial, *all...)
+}
+
+func (all Sequences) Len() int {
+	l := 0
+	for _, s := range all {
+		l += len(s)
+	}
+
+	return l
+}
+
 // Shortener represents an algorithm that can be used to shorten a string
 // by substituting words for abbreviations
 type Shortener func(matcher Matcher, original string, max int) string
@@ -25,35 +70,30 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 		return original
 	}
 
-	shortened := ""
-	word := ""
-	for len(original) > 0 && len(original)+len(word)+len(shortened) > max {
-		remaining, ch := lastChar(original)
-		if unicode.IsLetter(ch) {
-			word = string(ch) + word
-			if unicode.IsUpper(ch) {
-				word = strings.ToLower(word)
-				abbr := matcher.Match(word)
-				abbr = strings.Title(abbr)
-				shortened = abbr + shortened
-				word = ""
-			}
-		} else {
-			if word != "" {
-				abbr := matcher.Match(word)
-				shortened = abbr + shortened
-				word = ""
-			}
-			shortened = string(ch) + shortened
+	shortened := NewSequences(original)
+	for pos := len(shortened) - 1; pos >= 0 && shortened.Len() > max; pos-- {
+		str := shortened[pos]
+		abbr := matcher.Match(strings.ToLower(str))
+		if isTitleCase(str) {
+			abbr = strings.ToTitle(abbr)
 		}
-		original = remaining
+		shortened[pos] = abbr
 	}
-	if len(original)+len(shortened) > max {
-		word = matcher.Match(word)
-	}
-	shortened = original + word + shortened
 
-	return shortened
+	return shortened.String()
+}
+
+func isTitleCase(str string) bool {
+	ch := first(str)
+	return unicode.IsTitle(ch)
+}
+
+func first(str string) rune {
+	if str == "" {
+		return rune(0)
+	}
+
+	return []rune(str)[0]
 }
 
 func lastChar(str string) (string, rune) {
