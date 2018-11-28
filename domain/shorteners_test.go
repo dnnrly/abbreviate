@@ -71,7 +71,7 @@ func Test_lastChar(t *testing.T) {
 	}
 }
 
-func TestSequences_Add(t *testing.T) {
+func TestSequences_AddFront(t *testing.T) {
 	seqs := Sequences{}
 
 	seqs.AddFront("a")
@@ -84,6 +84,20 @@ func TestSequences_Add(t *testing.T) {
 	assert.Equal(t, "a", seqs[2])
 	assert.Equal(t, "cdba", seqs.String())
 	assert.Equal(t, 4, seqs.Len())
+}
+
+func TestSequences_AddBack(t *testing.T) {
+	seqs := Sequences{}
+
+	seqs.AddBack("a")
+	seqs.AddBack("b")
+	seqs.AddBack("cd")
+
+	assert.Equal(t, 3, len(seqs))
+	assert.Equal(t, "a", seqs[0])
+	assert.Equal(t, "b", seqs[1])
+	assert.Equal(t, "cd", seqs[2])
+	assert.Equal(t, "abcd", seqs.String())
 }
 
 func TestNewSequences(t *testing.T) {
@@ -99,11 +113,15 @@ func TestNewSequences(t *testing.T) {
 		{name: "5", orig: "aa-bb", want: Sequences{"aa", "-", "bb"}},
 		{name: "6", orig: "aaBbCc", want: Sequences{"aa", "Bb", "Cc"}},
 		{name: "7", orig: "aa-Bb-cc", want: Sequences{"aa", "-", "Bb", "-", "cc"}},
+		{name: "8", orig: "AaaBBbCcc", want: Sequences{"Aaa", "B", "Bb", "Ccc"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewSequences(tt.orig); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewSequences() = %v (%d), want %v (%d)", got, len(got), tt.want, len(tt.want))
+				t.Errorf("NewSequences() = %v (%d), want %v (%d)",
+					[]string(got), len(got),
+					[]string(tt.want), len(tt.want),
+				)
 			}
 		})
 	}

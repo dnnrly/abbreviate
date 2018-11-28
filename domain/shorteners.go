@@ -16,20 +16,33 @@ const (
 type Sequences []string
 
 func NewSequences(original string) Sequences {
-	seq := Sequences{""}
-	for len(original) > 0 {
-		remaining, ch := lastChar(original)
-		if seq[0] == "" {
-			seq[0] = string(ch) + seq[0]
-		} else if unicode.IsLetter(ch) && unicode.IsLetter(first(seq[0])) {
-			seq[0] = string(ch) + seq[0]
-			if isTitleCase(seq[0]) {
-				seq.AddFront("")
+	seq := Sequences{}
+
+	set := ""
+	for _, ch := range []rune(original) {
+		if !unicode.IsLetter(ch) {
+			if set != "" {
+				seq.AddBack(set)
 			}
+			seq.AddBack(string(ch))
+			set = ""
+		} else if unicode.IsUpper(ch) {
+			if set != "" {
+				seq.AddBack(set)
+			}
+			set = string(ch)
+		} else if !unicode.IsLetter(ch) {
+			if set != "" {
+				seq.AddBack(set)
+			}
+			seq.AddBack(string(ch))
+			set = ""
 		} else {
-			seq.AddFront(string(ch))
+			set += string(ch)
 		}
-		original = remaining
+	}
+	if set != "" {
+		seq.AddBack(set)
 	}
 
 	return seq
@@ -47,6 +60,10 @@ func (all Sequences) String() string {
 func (all *Sequences) AddFront(str string) {
 	initial := Sequences{str}
 	*all = append(initial, *all...)
+}
+
+func (all *Sequences) AddBack(str string) {
+	*all = append(*all, str)
 }
 
 func (all Sequences) Len() int {
@@ -75,7 +92,7 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 		str := shortened[pos]
 		abbr := matcher.Match(strings.ToLower(str))
 		if isTitleCase(str) {
-			abbr = strings.ToTitle(abbr)
+			abbr = makeTitle(abbr)
 		}
 		shortened[pos] = abbr
 	}
@@ -85,7 +102,22 @@ func ShortenFromBack(matcher *Matcher, original string, max int) string {
 
 func isTitleCase(str string) bool {
 	ch := first(str)
-	return unicode.IsTitle(ch)
+	return unicode.IsUpper(ch)
+}
+
+func makeTitle(str string) string {
+	if str == "" {
+		return ""
+	}
+
+	ch := first(str)
+	ch = unicode.ToUpper(ch)
+	result := string(ch)
+	if len(str) > 1 {
+		result += str[1:]
+	}
+
+	return result
 }
 
 func first(str string) rune {
