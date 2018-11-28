@@ -19,9 +19,17 @@ clean:
 	rm -f abbreviate
 	rm -rf dist
 
-deps:
+clean-deps:
+	rm -rf ./bin
+	rm -rf ./tmp
+	rm -rf ./libexec
+	rm -rf ./share
+
+./bin/bats:
 	git clone https://github.com/sstephenson/bats.git ./tmp/bats
 	./tmp/bats/install.sh .
+
+deps: ./bin/bats
 	$(GO_BIN) get ./...
 	$(GO_BIN) get github.com/gobuffalo/packr/v2/packr2
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
