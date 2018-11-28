@@ -5,7 +5,7 @@ go:
   - tip
 
 script:
-  - make ci-test
+  - make ci-test && make build && make acceptance-test
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)

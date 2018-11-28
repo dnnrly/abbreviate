@@ -35,7 +35,7 @@ test:
 acceptance-test:
 	bats --tap acceptance.bats
 
-ci-test: acceptance-test
+ci-test:
 	$(GO_BIN) test -race  -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
