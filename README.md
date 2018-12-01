@@ -7,8 +7,14 @@ Shorten your strings using common abbreviations.
 [![godoc](https://godoc.org/github.com/dnnrly/abbreviate?status.svg)](http://godoc.org/github.com/dnnrly/abbreviate)
 [![report card](https://goreportcard.com/badge/github.com/dnnrly/abbreviate)](https://goreportcard.com/report/github.com/dnnrly/abbreviate)
 
-## Installation
+## Motivation
 
+This tool comes out of a frustration of the name of resources (in my sepcific
+case, AWS stack names) being too long. Wouldn't it be nice if we could have a
+tool that would be able to suggest shorter alternatives if your original name
+is too long.
+
+## Installation
 
 ```bash
 go get github.com/dnnrly/abbreviate
