@@ -48,7 +48,7 @@ and non-letter.
 Hosted on Github - https://github.com/dnnrly/abbreviate
 
 If you spot a bug then feel free to raise an issue of fix it and make a pull
-request. We're really interested to see more abbreviations added.`,
+request. We're really interested to see more abbreviations added or corrected.`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if !optList && len(args) != 1 {
 			return errors.New("requires a string to abbreviate")
