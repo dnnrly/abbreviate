@@ -9,7 +9,7 @@ Shorten your strings using common abbreviations.
 
 ## Motivation
 
-This tool comes out of a frustration of the name of resources (in my sepcific
+This tool comes out of a frustration of the name of resources (in my specific
 case, AWS stack names) being too long. Wouldn't it be nice if we could have a
 tool that would be able to suggest shorter alternatives if your original name
 is too long.
