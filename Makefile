@@ -29,13 +29,17 @@ clean-deps:
 	git clone https://github.com/sstephenson/bats.git ./tmp/bats
 	./tmp/bats/install.sh .
 
-deps: ./bin/bats
+test-deps: ./bin/bats
 	$(GO_BIN) get ./...
-	$(GO_BIN) get github.com/gobuffalo/packr/v2/packr2
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
+
+build-deps:
+	$(GO_BIN) install github.com/gobuffalo/packr/v2/packr2
+
+deps: build-deps test-deps
 
 test:
 	$(GO_BIN) test ./...
