@@ -64,6 +64,7 @@ lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
 
 release: clean build acceptance-test
+	rm abbreviate
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
