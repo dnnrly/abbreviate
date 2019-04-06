@@ -50,13 +50,13 @@ build-deps: ./bin
 deps: build-deps test-deps
 
 test:
-	$(GO_BIN) test ./...
+	$(GO_BIN) test -mod vendor ./...
 
 acceptance-test:
 	bats --tap acceptance.bats
 
 ci-test:
-	$(GO_BIN) test -race  -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO_BIN) test -mod vendor -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
