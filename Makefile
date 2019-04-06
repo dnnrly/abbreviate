@@ -43,9 +43,7 @@ endif
 	mkdir ./bin
 
 build-deps: ./bin
-	curl https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
-	tar -xvfz ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
-	mv packr2 ./bin/
+ 	$(GO_BIN) install github.com/gobuffalo/packr/v2/packr2
 
 deps: build-deps test-deps
 
