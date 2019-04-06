@@ -7,6 +7,8 @@ GORELEASER_BIN ?= goreleaser
 PUBLISH_PARAM ?=
 TMP_DIR=/tmp
 
+PACKR_VERSION = 2.0.9
+
 export PATH := ./bin:$(PATH)
 
 install: deps
@@ -24,20 +26,26 @@ clean-deps:
 	rm -rf ./tmp
 	rm -rf ./libexec
 	rm -rf ./share
+	rm packr_${PACKR_VERSION}_linux_amd64.tar.gz
 
 ./bin/bats:
 	git clone https://github.com/sstephenson/bats.git ./tmp/bats
 	./tmp/bats/install.sh .
 
 test-deps: ./bin/bats
-	$(GO_BIN) get ./...
+	# $(GO_BIN) get ./...
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
 
-build-deps:
-	$(GO_BIN) install github.com/gobuffalo/packr/v2/packr2
+./bin:
+	mkdir ./bin
+
+build-deps: ./bin
+	curl https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
+	tar -xvfz ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
+	mv packr2 ./bin/
 
 deps: build-deps test-deps
 
