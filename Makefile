@@ -7,7 +7,7 @@ GORELEASER_BIN ?= goreleaser
 PUBLISH_PARAM ?=
 TMP_DIR=/tmp
 
-PACKR_VERSION = 2.0.9
+PACKR_VERSION = 2.1.0
 
 export PATH := ./bin:$(PATH)
 
@@ -43,7 +43,9 @@ endif
 	mkdir ./bin
 
 build-deps: ./bin
- 	$(GO_BIN) install github.com/gobuffalo/packr/v2/packr2
+	curl -L https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
+	tar -xvf ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
+	mv packr2 ./bin/
 
 deps: build-deps test-deps
 
