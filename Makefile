@@ -14,7 +14,7 @@ export PATH := ./bin:$(PATH)
 install: deps
 
 build:
-	$(PACKR_BIN) build -mod vendor .
+	$(PACKR_BIN) build .
 
 clean:
 	$(PACKR_BIN) clean
@@ -33,8 +33,8 @@ clean-deps:
 	./tmp/bats/install.sh .
 
 test-deps: ./bin/bats
-	# $(GO_BIN) get ./...
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
+	$(GO_BIN) get ./...
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
@@ -42,21 +42,23 @@ endif
 ./bin:
 	mkdir ./bin
 
-build-deps: ./bin
+./bin/packr2: ./bin
 	curl -L https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
 	tar -xvf ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
 	mv packr2 ./bin/
 
+build-deps: ./bin/packr2
+
 deps: build-deps test-deps
 
 test:
-	$(GO_BIN) test -mod vendor ./...
+	$(GO_BIN) test ./...
 
 acceptance-test:
 	bats --tap acceptance.bats
 
 ci-test:
-	$(GO_BIN) test -mod vendor -race -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO_BIN) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
