@@ -7,12 +7,14 @@ GORELEASER_BIN ?= goreleaser
 PUBLISH_PARAM ?=
 TMP_DIR=/tmp
 
+PACKR_VERSION = 2.1.0
+
 export PATH := ./bin:$(PATH)
 
 install: deps
 
 build:
-	$(PACKR_BIN) build
+	$(PACKR_BIN) build .
 
 clean:
 	$(PACKR_BIN) clean
@@ -24,20 +26,28 @@ clean-deps:
 	rm -rf ./tmp
 	rm -rf ./libexec
 	rm -rf ./share
+	rm packr_${PACKR_VERSION}_linux_amd64.tar.gz
 
 ./bin/bats:
 	git clone https://github.com/sstephenson/bats.git ./tmp/bats
 	./tmp/bats/install.sh .
 
 test-deps: ./bin/bats
-	$(GO_BIN) get ./...
 	$(CURL_BIN) -L https://git.io/vp6lP | sh
+	$(GO_BIN) get ./...
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
 
-build-deps:
-	$(GO_BIN) install github.com/gobuffalo/packr/v2/packr2
+./bin:
+	mkdir ./bin
+
+./bin/packr2: ./bin
+	curl -L https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
+	tar -xvf ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
+	mv packr2 ./bin/
+
+build-deps: ./bin/packr2
 
 deps: build-deps test-deps
 
@@ -48,7 +58,7 @@ acceptance-test:
 	bats --tap acceptance.bats
 
 ci-test:
-	$(GO_BIN) test -race  -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO_BIN) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
@@ -57,7 +67,7 @@ release: clean build acceptance-test
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
-	$(GO_BIN) get -u -tags ${TAGS}
+	$(GO_BIN) get -u
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif

@@ -1,14 +1,16 @@
-# This is an example goreleaser.yaml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
+
 before:
   hooks:
-    # you may remove this if you don't use vgo
-    - go mod download
-    # you may remove this if you don't need go generate
-    - go generate ./...
 builds:
 - env:
   - CGO_ENABLED=0
+- goos:
+  - linux
+  - darwin
+  - windows
+  goarch:
+  - amd64
+  - "386"
 archive:
   replacements:
     darwin: Darwin
@@ -26,3 +28,18 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+nfpm:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  replacements:
+    amd64: 64-bit
+    386: 32-bit
+    darwin: macOS
+    linux: Tux
+  vendor: Pascal Dennerly
+  homepage: https://github.com/dnnrly/abbreviate/
+  maintainer: Pascal Dennerly <dnnrly@gmail.com>
+  description: Shorten your strings using common abbreviations.
+  license: Apache 2.0
+  formats:
+    - deb
+    - rpm
