@@ -12,7 +12,7 @@ export PATH := ./bin:$(PATH)
 install: deps
 
 build:
-	$(PACKR_BIN) build
+	$(PACKR_BIN) build -mod vendor .
 
 clean:
 	$(PACKR_BIN) clean
@@ -57,7 +57,7 @@ release: clean build acceptance-test
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
-	$(GO_BIN) get -u -tags ${TAGS}
+	$(GO_BIN) get -u
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
