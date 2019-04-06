@@ -10,10 +10,7 @@ builds:
   - amd64
 archive:
   replacements:
-    darwin: Darwin
     linux: Linux
-    windows: Windows
-    386: i386
     amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
@@ -29,8 +26,6 @@ nfpm:
   name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
   replacements:
     amd64: 64-bit
-    386: 32-bit
-    darwin: macOS
     linux: Tux
   vendor: Pascal Dennerly
   homepage: https://github.com/dnnrly/abbreviate/
@@ -38,5 +33,4 @@ nfpm:
   description: Shorten your strings using common abbreviations.
   license: Apache 2.0
   formats:
-    - deb
     - rpm
