@@ -7,81 +7,47 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
-	"sync"
 
-	"github.com/gobuffalo/envy"
 	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/packr/v2/file"
 	"github.com/gobuffalo/packr/v2/file/resolver"
 	"github.com/gobuffalo/packr/v2/plog"
 	"github.com/markbates/oncer"
-	"github.com/pkg/errors"
+	"errors"
 )
 
 var _ packd.Box = &Box{}
-var _ packd.HTTPBox = Box{}
+var _ packd.HTTPBox = &Box{}
 var _ packd.Addable = &Box{}
 var _ packd.Walkable = &Box{}
-var _ packd.Finder = Box{}
+var _ packd.Finder = &Box{}
+
+// Box represent a folder on a disk you want to
+// have access to in the built Go binary.
+type Box struct {
+	Path            string            `json:"path"`
+	Name            string            `json:"name"`
+	ResolutionDir   string            `json:"resolution_dir"`
+	DefaultResolver resolver.Resolver `json:"default_resolver"`
+	resolvers       resolversMap
+	dirs            dirsMap
+}
 
 // NewBox returns a Box that can be used to
 // retrieve files from either disk or the embedded
 // binary.
+// Deprecated: Use New instead.
 func NewBox(path string) *Box {
 	oncer.Deprecate(0, "packr.NewBox", "Use packr.New instead.")
 	return New(path, path)
 }
 
-func resolutionDir(og string) string {
-	ng, _ := filepath.Abs(og)
-
-	exists := func(s string) bool {
-		_, err := os.Stat(s)
-		if err != nil {
-			return false
-		}
-		plog.Debug("packr", "resolutionDir", "original", og, "resolved", s)
-		return true
-	}
-
-	if exists(ng) {
-		return ng
-	}
-
-	_, filename, _, _ := runtime.Caller(2)
-
-	ng = filepath.Join(filepath.Dir(filename), og)
-
-	// // this little hack courtesy of the `-cover` flag!!
-	cov := filepath.Join("_test", "_obj_test")
-	ng = strings.Replace(ng, string(filepath.Separator)+cov, "", 1)
-
-	if exists(ng) {
-		return ng
-	}
-
-	ng = filepath.Join(envy.GoPath(), "src", ng)
-	if exists(ng) {
-		return ng
-	}
-
-	return og
-}
-
-func construct(name string, path string) *Box {
-	return &Box{
-		Path:          path,
-		Name:          name,
-		ResolutionDir: resolutionDir(path),
-		resolvers:     map[string]resolver.Resolver{},
-		moot:          &sync.RWMutex{},
-	}
-}
-
+// New returns a new Box with the name of the box
+// and the path of the box.
 func New(name string, path string) *Box {
 	plog.Debug("packr", "New", "name", name, "path", path)
 	b, _ := findBox(name)
@@ -99,22 +65,20 @@ func New(name string, path string) *Box {
 	return b
 }
 
-// Box represent a folder on a disk you want to
-// have access to in the built Go binary.
-type Box struct {
-	Path            string            `json:"path"`
-	Name            string            `json:"name"`
-	ResolutionDir   string            `json:"resolution_dir"`
-	DefaultResolver resolver.Resolver `json:"default_resolver"`
-	resolvers       map[string]resolver.Resolver
-	moot            *sync.RWMutex
+// Folder returns a Box that will NOT be packed.
+// This is useful for writing tests or tools that
+// need to work with a folder at runtime.
+func Folder(path string) *Box {
+	return New(path, path)
 }
 
+// SetResolver allows for the use of a custom resolver for
+// the specified file
 func (b *Box) SetResolver(file string, res resolver.Resolver) {
-	b.moot.Lock()
+	d := filepath.Dir(file)
+	b.dirs.Store(d, true)
 	plog.Debug(b, "SetResolver", "file", file, "resolver", fmt.Sprintf("%T", res))
-	b.resolvers[resolver.Key(file)] = res
-	b.moot.Unlock()
+	b.resolvers.Store(resolver.Key(file), res)
 }
 
 // AddString converts t to a byteslice and delegates to AddBytes to add to b.data
@@ -127,7 +91,7 @@ func (b *Box) AddBytes(path string, t []byte) error {
 	m := map[string]file.File{}
 	f, err := file.NewFile(path, t)
 	if err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 	m[resolver.Key(path)] = f
 	res := resolver.NewInMemory(m)
@@ -137,14 +101,14 @@ func (b *Box) AddBytes(path string, t []byte) error {
 
 // FindString returns either the string of the requested
 // file or an error if it can not be found.
-func (b Box) FindString(name string) (string, error) {
+func (b *Box) FindString(name string) (string, error) {
 	bb, err := b.Find(name)
 	return string(bb), err
 }
 
 // Find returns either the byte slice of the requested
 // file or an error if it can not be found.
-func (b Box) Find(name string) ([]byte, error) {
+func (b *Box) Find(name string) ([]byte, error) {
 	f, err := b.Resolve(name)
 	if err != nil {
 		return []byte(""), err
@@ -155,24 +119,35 @@ func (b Box) Find(name string) ([]byte, error) {
 }
 
 // Has returns true if the resource exists in the box
-func (b Box) Has(name string) bool {
+func (b *Box) Has(name string) bool {
 	_, err := b.Find(name)
-	if err != nil {
-		return false
+	return err == nil
+}
+
+// HasDir returns true if the directory exists in the box
+func (b *Box) HasDir(name string) bool {
+	oncer.Do("packr2/box/HasDir"+b.Name, func() {
+		for _, f := range b.List() {
+			for d := filepath.Dir(f); d != "."; d = filepath.Dir(d) {
+				b.dirs.Store(d, true)
+			}
+		}
+	})
+	if name == "/" {
+		return b.Has("index.html")
 	}
-	return true
+	_, ok := b.dirs.Load(name)
+	return ok
 }
 
 // Open returns a File using the http.File interface
-func (b Box) Open(name string) (http.File, error) {
+func (b *Box) Open(name string) (http.File, error) {
 	plog.Debug(b, "Open", "name", name)
-	if len(filepath.Ext(name)) == 0 {
-		d, err := file.NewDir(name)
-		plog.Debug(b, "Open", "name", name, "dir", d)
-		return d, err
-	}
 	f, err := b.Resolve(name)
 	if err != nil {
+		if len(filepath.Ext(name)) == 0 {
+			return b.openWoExt(name)
+		}
 		return f, err
 	}
 	f, err = file.NewFileR(name, f)
@@ -180,8 +155,21 @@ func (b Box) Open(name string) (http.File, error) {
 	return f, err
 }
 
+func (b *Box) openWoExt(name string) (http.File, error) {
+	if !b.HasDir(name) {
+		id := path.Join(name, "index.html")
+		if b.Has(id) {
+			return b.Open(id)
+		}
+		return nil, os.ErrNotExist
+	}
+	d, err := file.NewDir(name)
+	plog.Debug(b, "Open", "name", name, "dir", d)
+	return d, err
+}
+
 // List shows "What's in the box?"
-func (b Box) List() []string {
+func (b *Box) List() []string {
 	var keys []string
 
 	b.Walk(func(path string, info File) error {
@@ -198,12 +186,24 @@ func (b Box) List() []string {
 	return keys
 }
 
+// Resolve will attempt to find the file in the box,
+// returning an error if the find can not be found.
 func (b *Box) Resolve(key string) (file.File, error) {
 	key = strings.TrimPrefix(key, "/")
-	b.moot.RLock()
-	r, ok := b.resolvers[resolver.Key(key)]
-	b.moot.RUnlock()
-	if !ok {
+
+	var r resolver.Resolver
+
+	b.resolvers.Range(func(k string, vr resolver.Resolver) bool {
+		lk := strings.ToLower(resolver.Key(k))
+		lkey := strings.ToLower(resolver.Key(key))
+		if lk == lkey {
+			r = vr
+			return false
+		}
+		return true
+	})
+
+	if r == nil {
 		r = b.DefaultResolver
 		if r == nil {
 			r = resolver.DefaultResolver
@@ -224,11 +224,11 @@ func (b *Box) Resolve(key string) (file.File, error) {
 		}
 		b, err := ioutil.ReadAll(f)
 		if err != nil {
-			return f, errors.WithStack(err)
+			return f, err
 		}
 		f, err = file.NewFile(key, b)
 		if err != nil {
-			return f, errors.WithStack(err)
+			return f, err
 		}
 	}
 	plog.Debug(r, "Resolve", "box", b.Name, "key", key, "file", f.Name())

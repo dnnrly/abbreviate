@@ -86,7 +86,6 @@ func (m *MemoryBox) Find(path string) (ret []byte, e error) {
 
 			res := file.String()
 			b = []byte(res)
-			m.AddString(lp, res)
 			return nil
 		})
 		if err != nil {

@@ -1,8 +1,8 @@
 package genny
 
 import (
-	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gobuffalo/logger"
-	"github.com/pkg/errors"
 )
 
 // WetRunner will execute commands and write files
@@ -32,7 +31,7 @@ func WetRunner(ctx context.Context) *Runner {
 		defer os.Chdir(pwd)
 		os.MkdirAll(path, 0755)
 		if err := os.Chdir(path); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 		return fn()
 	}
@@ -50,11 +49,11 @@ func wetRequestFn(req *http.Request, c *http.Client) (*http.Response, error) {
 
 	res, err := c.Do(req)
 	if err != nil {
-		return res, errors.WithStack(err)
+		return res, err
 	}
 
 	if res.StatusCode >= 400 {
-		return res, errors.WithStack(errors.Errorf("response returned non-success code: %d", res.StatusCode))
+		return res, fmt.Errorf("response returned non-success code: %d", res.StatusCode)
 	}
 	return res, nil
 }
@@ -75,7 +74,7 @@ func wetExecFn(cmd *exec.Cmd) error {
 func wetFileFn(r *Runner, f File) (File, error) {
 	if d, ok := f.(Dir); ok {
 		if err := os.MkdirAll(d.Name(), d.Perm); err != nil {
-			return f, errors.WithStack(err)
+			return f, err
 		}
 		return d, nil
 	}
@@ -86,17 +85,15 @@ func wetFileFn(r *Runner, f File) (File, error) {
 	}
 	dir := filepath.Dir(name)
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return f, errors.WithStack(err)
+		return f, err
 	}
 	ff, err := os.Create(name)
 	if err != nil {
-		return f, errors.WithStack(err)
+		return f, err
 	}
 	defer ff.Close()
-	bb := &bytes.Buffer{}
-	mw := io.MultiWriter(bb, ff)
-	if _, err := io.Copy(mw, f); err != nil {
-		return f, errors.WithStack(err)
+	if _, err := io.Copy(ff, f); err != nil {
+		return f, err
 	}
-	return NewFile(f.Name(), bb), nil
+	return f, nil
 }

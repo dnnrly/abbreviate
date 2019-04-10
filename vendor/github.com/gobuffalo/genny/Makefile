@@ -2,7 +2,7 @@ TAGS ?= "sqlite"
 GO_BIN ?= go
 
 install:
-	packr
+	packr2
 	$(GO_BIN) install -v ./genny
 
 tidy:
@@ -14,17 +14,17 @@ endif
 
 deps:
 	$(GO_BIN) get github.com/gobuffalo/release
-	$(GO_BIN) get github.com/gobuffalo/packr/packr
+	$(GO_BIN) get github.com/gobuffalo/packr/v2/packr2
 	$(GO_BIN) get -tags ${TAGS} -t ./...
 	make tidy
 
 build:
-	packr
+	packr2
 	$(GO_BIN) build -v .
 	make tidy
 
 test:
-	packr
+	packr2
 	$(GO_BIN) test -tags ${TAGS} ./...
 	make tidy
 
@@ -36,10 +36,10 @@ lint:
 	gometalinter --vendor ./... --deadline=1m --skip=internal
 
 update:
-	packr clean
+	packr2 clean
 	$(GO_BIN) get -u -tags ${TAGS}
 	make tidy
-	packr
+	packr2
 	make test
 	make install
 	make tidy
