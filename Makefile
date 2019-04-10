@@ -63,8 +63,7 @@ ci-test:
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
 
-release: clean build acceptance-test
-	rm abbreviate
+release: clean
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
 update:
