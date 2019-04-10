@@ -1,20 +1,22 @@
 CURL_BIN ?= curl
 GO_BIN ?= go
 LINT_BIN ?= gometalinter
-PACKR_BIN ?= packr2
+PACKR_BIN ?= ./bin/packr2
 GORELEASER_BIN ?= goreleaser
 
 PUBLISH_PARAM ?=
 TMP_DIR=/tmp
 
 PACKR_VERSION = 2.1.0
+BASE_DIR=$(shell pwd)
 
 export PATH := ./bin:$(PATH)
 
 install: deps
 
 build:
-	$(PACKR_BIN) build .
+	$(PACKR_BIN)
+	$(GO_BIN) -mod vendor build
 
 clean:
 	$(PACKR_BIN) clean
@@ -43,9 +45,7 @@ endif
 	mkdir ./bin
 
 ./bin/packr2: ./bin
-	curl -L https://github.com/gobuffalo/packr/releases/download/v${PACKR_VERSION}/packr_${PACKR_VERSION}_linux_amd64.tar.gz -o packr_${PACKR_VERSION}_linux_amd64.tar.gz
-	tar -xvf ./packr_${PACKR_VERSION}_linux_amd64.tar.gz packr2
-	mv packr2 ./bin/
+	cd vendor/github.com/gobuffalo/packr/v2/packr2; go build -pkgdir $(BASE_DIR)/vendor -o $(BASE_DIR)/bin/packr2
 
 build-deps: ./bin/packr2
 
