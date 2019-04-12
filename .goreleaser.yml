@@ -1,22 +1,12 @@
 
 before:
   hooks:
+  - ./bin/packr2
 builds:
 - env:
   - CGO_ENABLED=0
-- goos:
-  - linux
-  - darwin
-  - windows
-  goarch:
-  - amd64
-  - "386"
-archive:
-  replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    amd64: x86_64
+- flags:
+  - -mod=vendor
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -31,14 +21,10 @@ nfpm:
   name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
   replacements:
     amd64: 64-bit
-    386: 32-bit
-    darwin: macOS
-    linux: Tux
   vendor: Pascal Dennerly
   homepage: https://github.com/dnnrly/abbreviate/
   maintainer: Pascal Dennerly <dnnrly@gmail.com>
   description: Shorten your strings using common abbreviations.
   license: Apache 2.0
   formats:
-    - deb
     - rpm

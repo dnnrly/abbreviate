@@ -8,9 +8,9 @@ import (
 	"github.com/gobuffalo/packr/v2/file"
 	"github.com/gobuffalo/packr/v2/file/resolver"
 	"github.com/gobuffalo/packr/v2/plog"
-	"github.com/pkg/errors"
 )
 
+// WalkFunc is used to walk a box
 type WalkFunc = packd.WalkFunc
 
 // Walk will traverse the box and call the WalkFunc for each file in the box/folder.
@@ -20,31 +20,34 @@ func (b *Box) Walk(wf WalkFunc) error {
 	dr := b.DefaultResolver
 	if dr == nil {
 		cd := resolver.OsPath(b.ResolutionDir)
-		dr = &resolver.Disk{Root: string(cd)}
+		dr = &resolver.Disk{Root: cd}
 	}
 	if fm, ok := dr.(file.FileMappable); ok {
 		for n, f := range fm.FileMap() {
 			m[n] = f
 		}
 	}
-
-	b.moot.RLock()
-	for n, r := range b.resolvers {
-		f, err := r.Resolve("", n)
+	var err error
+	b.resolvers.Range(func(n string, r resolver.Resolver) bool {
+		var f file.File
+		f, err = r.Resolve("", n)
 		if err != nil {
-			return errors.WithStack(err)
+			return false
 		}
 		keep := true
 		for k := range m {
-			if strings.ToLower(k) == strings.ToLower(n) {
+			if strings.EqualFold(k, n) {
 				keep = false
 			}
 		}
 		if keep {
 			m[n] = f
 		}
+		return true
+	})
+	if err != nil {
+		return err
 	}
-	b.moot.RUnlock()
 
 	var keys = make([]string, 0, len(m))
 	for k := range m {
@@ -56,20 +59,20 @@ func (b *Box) Walk(wf WalkFunc) error {
 		osPath := resolver.OsPath(k)
 		plog.Debug(b, "Walk", "path", k, "osPath", osPath)
 		if err := wf(osPath, m[k]); err != nil {
-			return errors.WithStack(err)
+			return err
 		}
 	}
 	return nil
 }
 
 // WalkPrefix will call box.Walk and call the WalkFunc when it finds paths that have a matching prefix
-func (b Box) WalkPrefix(prefix string, wf WalkFunc) error {
+func (b *Box) WalkPrefix(prefix string, wf WalkFunc) error {
 	ipref := resolver.OsPath(prefix)
 	return b.Walk(func(path string, f File) error {
 		ipath := resolver.OsPath(path)
 		if strings.HasPrefix(ipath, ipref) {
 			if err := wf(path, f); err != nil {
-				return errors.WithStack(err)
+				return err
 			}
 		}
 		return nil
