@@ -4,8 +4,9 @@ LINT_BIN ?= gometalinter
 PACKR_BIN ?= ./bin/packr2
 GORELEASER_BIN ?= goreleaser
 
-PUBLISH_PARAM ?=
-TMP_DIR=/tmp
+PUBLISH_PARAM?=
+GO_MOD_PARAM?=-mod vendor
+TMP_DIR=?/tmp
 
 PACKR_VERSION = 2.1.0
 BASE_DIR=$(shell pwd)
@@ -16,7 +17,7 @@ install: deps
 
 build:
 	$(PACKR_BIN)
-	$(GO_BIN) -mod vendor build
+	$(GO_BIN) build $(GO_MOD_PARAM)
 
 clean:
 	$(PACKR_BIN) clean
@@ -52,13 +53,13 @@ build-deps: ./bin/packr2
 deps: build-deps test-deps
 
 test:
-	$(GO_BIN) test ./...
+	$(GO_BIN) test $(GO_MOD_PARAM) ./...
 
 acceptance-test:
 	bats --tap acceptance.bats
 
 ci-test:
-	$(GO_BIN) test -race -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO_BIN) test $(GO_MOD_PARAM) -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
 	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
