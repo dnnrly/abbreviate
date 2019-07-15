@@ -37,11 +37,13 @@ ltd=limited`)
 		{name: "Real example, max on seperator", original: "strategy-limited", max: 9, want: "stg-ltd"},
 		{name: "Real example, max shorter than first word", original: "strategy-limited", max: 6, want: "stg-ltd"},
 		{name: "Real example, no short", original: "strategy-limited", max: 99, want: "strategy-limited"},
+		{name: "Real example, with numbers #1", original: "strategy-limited99", max: 15, want: "strategy-ltd99"},
+		{name: "Real example, with numbers #2", original: "strategy-limited-99", max: 15, want: "strategy-ltd-99"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ShortenFromBack(matcher, tt.original, tt.max); got != tt.want {
-				t.Errorf("ShortenFromBack('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
+			if got := AsOriginal(matcher, tt.original, tt.max); got != tt.want {
+				t.Errorf("AsOriginal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
 			}
 		})
 	}
@@ -109,11 +111,15 @@ func TestNewSequences(t *testing.T) {
 		{name: "1", orig: "abc", want: Sequences{"abc"}},
 		{name: "2", orig: "a-b-c", want: Sequences{"a", "-", "b", "-", "c"}},
 		{name: "3", orig: "ABC", want: Sequences{"A", "B", "C"}},
-		{name: "4", orig: "a--b--c", want: Sequences{"a", "-", "-", "b", "-", "-", "c"}},
+		{name: "4", orig: "a-b--c", want: Sequences{"a", "-", "b", "--", "c"}},
 		{name: "5", orig: "aa-bb", want: Sequences{"aa", "-", "bb"}},
 		{name: "6", orig: "aaBbCc", want: Sequences{"aa", "Bb", "Cc"}},
 		{name: "7", orig: "aa-Bb-cc", want: Sequences{"aa", "-", "Bb", "-", "cc"}},
 		{name: "8", orig: "AaaBBbCcc", want: Sequences{"Aaa", "B", "Bb", "Ccc"}},
+		{name: "9", orig: "AaaBBb888Ccc", want: Sequences{"Aaa", "B", "Bb", "888", "Ccc"}},
+		{name: "10", orig: "AaaBBb-8Ccc", want: Sequences{"Aaa", "B", "Bb", "-", "8", "Ccc"}},
+		{name: "11", orig: "", want: Sequences{}},
+		{name: "12", orig: "a", want: Sequences{"a"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -142,4 +148,48 @@ func Test_first(t *testing.T) {
 	assert.Equal(t, rune('c'), first("cba"))
 	assert.Equal(t, rune('B'), first("Bac"))
 	assert.Equal(t, false, unicode.IsTitle(first("")))
+}
+
+func TestAsSnake(t *testing.T) {
+	matcher := NewMatcherFromString(`a=aaa
+b=bbb
+c=ccc
+d=ddd
+stg=strategy
+ltd=limited`)
+	tests := []struct {
+		name      string
+		original  string
+		seperator string
+		max       int
+		want      string
+	}{
+		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", seperator: "_", max: 0, want: "a_b_c"},
+		{name: "Partial abbreviation with '_'", original: "aaa-bbb-ccc", seperator: "_", max: 10, want: "aaa_bbb_c"},
+		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", seperator: "_", max: 99, want: "aaa_bbb_ccc"},
+		{name: "Length is 0 with camel case", original: "AaaBbbCcc", seperator: "_", max: 0, want: "a_b_c"},
+		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", seperator: "_", max: 0, want: "a_b_c"},
+		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", seperator: "_", max: 8, want: "aaa_b_c"},
+		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", seperator: "_", max: 0, want: "a_b_bb_c"},
+		{name: "Mixed camel case and non word seperators", original: "AaaBbb-ccc", seperator: "_", max: 0, want: "a_b_c"},
+		{name: "Mixed camel case and non word seperators with same borders", seperator: "_", original: "Aaa-Bbb-Ccc", max: 0, want: "a_b_c"},
+		{name: "Real example, full short", original: "strategy-limited", seperator: "_", max: 0, want: "stg_ltd"},
+		{name: "Real example, shorter than total", original: "strategy-limited", seperator: "_", max: 13, want: "strategy_ltd"},
+		{name: "Real example, max same as shorted", original: "strategy-limited", seperator: "_", max: 12, want: "strategy_ltd"},
+		{name: "Real example, max on seperator", original: "strategy-limited", seperator: "_", max: 9, want: "stg_ltd"},
+		{name: "Real example, max shorter than first word", original: "strategy-limited", seperator: "_", max: 6, want: "stg_ltd"},
+		{name: "Real example, no short", original: "strategy-limited", seperator: "_", max: 99, want: "strategy_limited"},
+		{name: "Real example, with numbers #1", original: "strategy-limited99", seperator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Real example, with numbers #2", original: "strategy-limited-99", seperator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Multiple seperators", original: "strategy---limited--99", seperator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Other seperator", original: "strategy-limited-99", seperator: "+", max: 15, want: "strategy+ltd+99"},
+		{name: "Empty string", original: "", seperator: "+", max: 15, want: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AsSnake(matcher, tt.original, tt.seperator, tt.max); got != tt.want {
+				t.Errorf("AsSnake() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

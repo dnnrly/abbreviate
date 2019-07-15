@@ -27,12 +27,14 @@ import (
 )
 
 var (
-	optList     = false
-	optNewline  = true
-	optLanguage = "en-us"
-	optSet      = "common"
-	optCustom   = ""
-	optMax      = 0
+	optList      = false
+	optNewline   = true
+	optLanguage  = "en-us"
+	optSet       = "common"
+	optCustom    = ""
+	optMax       = 0
+	optStyle     = "original"
+	optSeperator = "_"
 
 	data = packr.New("abbreviate", "../data")
 )
@@ -80,7 +82,7 @@ request. We're really interested to see more abbreviations added or corrected.`,
 		}
 
 		matcher := domain.NewMatcherFromString(all)
-		abbr := domain.ShortenFromBack(matcher, args[0], optMax)
+		abbr := domain.AsOriginal(matcher, args[0], optMax)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
@@ -105,4 +107,8 @@ func init() {
 	rootCmd.Flags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
 	rootCmd.Flags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
 	rootCmd.Flags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
+	rootCmd.Flags().StringVar(&optStyle, "style", optStyle, `Convert the outputted string to the specified style. Possible values are original, pascal,
+camel, and snake. For snake case, use the --seperator option to set the seperator.
+Default is "original" which retains the original seperation between words.`)
+	rootCmd.Flags().StringVar(&optSeperator, "seperator", optSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
 }
