@@ -30,16 +30,16 @@
 }
 
 @test "Pascal case" {
-    result="$(./abbreviate pascal --max 15 --newline=false strategy-limited)"
+    result="$(./abbreviate pascal --max 13 --newline=false strategy-limited)"
     [ $result == "StrategyLtd" ]
 }
 
 @test "Camel case" {
-    result="$(./abbreviate pascal --max 15 --newline=false strategy-limited)"
+    result="$(./abbreviate pascal --max 13 --newline=false strategy-limited)"
     [ $result == "strategyLtd" ]
 }
 
 @test "Camel case convertion" {
-    result="$(./abbreviate pascal --max 99 --newline=false strategy-limited)"
+    result="$(./abbreviate pascal --max 99 --newline=false Strategy-limited)"
     [ $result == "strategyLimited" ]
 }

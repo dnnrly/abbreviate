@@ -151,6 +151,42 @@ func AsSnake(matcher *Matcher, original, seperator string, max int) string {
 	return shortened.String()
 }
 
+// AsPascal discovers words using camel case and non letter characters,
+// starting from the back until the string has less than 'max' characters
+// or it can't shorten any more. Word boundaries are a capital letter at
+// the start of each word
+func AsPascal(matcher *Matcher, original string, max int) string {
+	if original == "" {
+		return ""
+	}
+
+	parts := NewSequences(original)
+	shortened := Sequences{}
+
+	for _, str := range parts {
+		ch := first(str)
+		if unicode.IsLetter(ch) {
+			str = makeTitle(str)
+			shortened.AddBack(str)
+		} else if unicode.IsNumber(ch) {
+			shortened.AddBack(str)
+		}
+	}
+
+	if len(original) < max {
+		return shortened.String()
+	}
+
+	for pos := len(shortened) - 1; pos >= 0 && shortened.Len() > max; pos-- {
+		str := strings.ToLower(shortened[pos])
+		abbr := matcher.Match(str)
+		abbr = makeTitle(abbr)
+		shortened[pos] = abbr
+	}
+
+	return shortened.String()
+}
+
 func isTitleCase(str string) bool {
 	ch := first(str)
 	return unicode.IsUpper(ch)

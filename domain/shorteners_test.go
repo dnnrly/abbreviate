@@ -193,3 +193,44 @@ ltd=limited`)
 		})
 	}
 }
+
+func TestAsPascal(t *testing.T) {
+	matcher := NewMatcherFromString(`a=aaa
+b=bbb
+c=ccc
+d=ddd
+stg=strategy
+ltd=limited`)
+	tests := []struct {
+		name     string
+		original string
+		max      int
+		want     string
+	}{
+		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "AaaBbbCcc"},
+		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", max: 0, want: "ABC"},
+		{name: "Partial abbreviation with '-'", original: "aaa-bbb-ccc", max: 8, want: "AaaBbbC"},
+		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", max: 99, want: "AaaBbbCcc"},
+		{name: "Length is 0 with camel case", original: "AaaBbbCcc", max: 0, want: "ABC"},
+		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", max: 0, want: "ABC"},
+		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", max: 8, want: "AaaBbbC"},
+		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", max: 0, want: "ABBbC"},
+		{name: "Mixed camel case and non word seperators", original: "AaaBbb-ccc", max: 0, want: "ABC"},
+		{name: "Mixed camel case and non word seperators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "ABC"},
+		{name: "Real example, full short", original: "strategy-limited", max: 0, want: "StgLtd"},
+		{name: "Real example, shorter than total", original: "strategy-limited", max: 13, want: "StrategyLtd"},
+		{name: "Real example, max same as shorted", original: "strategy-limited", max: 12, want: "StrategyLtd"},
+		{name: "Real example, max on seperator", original: "strategy-limited", max: 9, want: "StgLtd"},
+		{name: "Real example, max shorter than first word", original: "strategy-limited", max: 6, want: "StgLtd"},
+		{name: "Real example, no short", original: "strategy-limited", max: 99, want: "StrategyLimited"},
+		{name: "Real example, with numbers #1", original: "strategy-limited99", max: 15, want: "StrategyLtd99"},
+		{name: "Real example, with numbers #2", original: "strategy-limited-99", max: 15, want: "StrategyLtd99"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AsPascal(matcher, tt.original, tt.max); got != tt.want {
+				t.Errorf("AsPascal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
+			}
+		})
+	}
+}
