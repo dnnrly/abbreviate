@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -101,9 +102,12 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
 	rootCmd.PersistentFlags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
 	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
+}
 
-	// 	rootCmd.Flags().StringVar(&optStyle, "style", optStyle, `Convert the outputted string to the specified style. Possible values are original, pascal,
-	// camel, and snake. For snake case, use the --seperator option to set the seperator.
-	// Default is "original" which retains the original seperation between words.`)
-	// 	rootCmd.Flags().StringVar(&optSeperator, "seperator", optSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
+func validateArgPresent(cmd *cobra.Command, args []string) error {
+	if !optList && len(args) != 1 {
+		return errors.New("requires a string to abbreviate")
+	}
+
+	return nil
 }

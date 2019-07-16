@@ -22,13 +22,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// originalCmd represents the original command
-var originalCmd = &cobra.Command{
-	Use:   "original [string]",
-	Short: "Abbreviate the string using the original word boundary seperators",
-	Args:  validateArgPresent,
+var (
+	optSnakeSeperator = "_"
+)
+
+// snakeCmd represents the snake command
+var snakeCmd = &cobra.Command{
+	Use:   "snake [string]",
+	Short: "Abbreviate a string and convert it to snake case",
+	Long: `Abbreviate a string and convert it to snake case.
+
+Where a string is not shortened, it will be converted to snake case anyway, even
+if this means that the string will end up longer.`,
+	Args: validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsOriginal(matcher, args[0], optMax)
+		abbr := domain.AsSnake(matcher, args[0], optSnakeSeperator, optMax)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
@@ -38,5 +46,6 @@ var originalCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(originalCmd)
+	rootCmd.AddCommand(snakeCmd)
+	snakeCmd.Flags().StringVar(&optSnakeSeperator, "seperator", optSnakeSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
 }
