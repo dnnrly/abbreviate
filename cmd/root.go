@@ -20,28 +20,26 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/packr/v2"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/dnnrly/abbreviate/domain"
 )
 
 var (
-	optList      = false
-	optNewline   = true
-	optLanguage  = "en-us"
-	optSet       = "common"
-	optCustom    = ""
-	optMax       = 0
-	optStyle     = "original"
-	optSeperator = "_"
+	optList     = false
+	optNewline  = true
+	optLanguage = "en-us"
+	optSet      = "common"
+	optCustom   = ""
+	optMax      = 0
 
-	data = packr.New("abbreviate", "../data")
+	data    = packr.New("abbreviate", "../data")
+	matcher *domain.Matcher
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "abbreviate [string]",
+	Use:   "abbreviate [action]",
 	Short: "Shorten your string using common abbreviations",
 	Long: `This tool will attempt to shorten the string provided using common abbreviations
 specified by language and 'set'. Word boundaries will be detected using title case
@@ -51,14 +49,7 @@ Hosted on Github - https://github.com/dnnrly/abbreviate
 
 If you spot a bug, feel free to raise an issue or fix it and make a pull
 request. We're really interested to see more abbreviations added or corrected.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if !optList && len(args) != 1 {
-			return errors.New("requires a string to abbreviate")
-		}
-
-		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if optList {
 			fmt.Printf("Available languages and abbreviation sets:\n")
 			items := data.List()
@@ -81,13 +72,16 @@ request. We're really interested to see more abbreviations added or corrected.`,
 			os.Exit(1)
 		}
 
-		matcher := domain.NewMatcherFromString(all)
-		abbr := domain.AsOriginal(matcher, args[0], optMax)
-
-		fmt.Printf("%s", abbr)
-		if optNewline {
-			fmt.Printf("\n")
-		}
+		matcher = domain.NewMatcherFromString(all)
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Fprintf(
+			os.Stderr,
+			`Error: use one of the actions to abbreviate a string.
+Run 'abbreviate --help' for usage.
+`,
+		)
+		os.Exit(1)
 	},
 }
 
@@ -101,14 +95,15 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&optList, "list", "", optList, "List all abbreviate sets by language")
-	rootCmd.Flags().BoolVarP(&optNewline, "newline", "n", optNewline, "Add newline to the end of the string")
-	rootCmd.Flags().StringVarP(&optLanguage, "language", "l", optLanguage, "Language to select")
-	rootCmd.Flags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
-	rootCmd.Flags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
-	rootCmd.Flags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
-	rootCmd.Flags().StringVar(&optStyle, "style", optStyle, `Convert the outputted string to the specified style. Possible values are original, pascal,
-camel, and snake. For snake case, use the --seperator option to set the seperator.
-Default is "original" which retains the original seperation between words.`)
-	rootCmd.Flags().StringVar(&optSeperator, "seperator", optSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
+	rootCmd.PersistentFlags().BoolVarP(&optList, "list", "", optList, "List all abbreviate sets by language")
+	rootCmd.PersistentFlags().BoolVarP(&optNewline, "newline", "n", optNewline, "Add newline to the end of the string")
+	rootCmd.PersistentFlags().StringVarP(&optLanguage, "language", "l", optLanguage, "Language to select")
+	rootCmd.PersistentFlags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
+	rootCmd.PersistentFlags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
+	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
+
+	// 	rootCmd.Flags().StringVar(&optStyle, "style", optStyle, `Convert the outputted string to the specified style. Possible values are original, pascal,
+	// camel, and snake. For snake case, use the --seperator option to set the seperator.
+	// Default is "original" which retains the original seperation between words.`)
+	// 	rootCmd.Flags().StringVar(&optSeperator, "seperator", optSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
 }
