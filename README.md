@@ -25,12 +25,24 @@ make build
 
 ```
 This tool will attempt to shorten the string provided using common abbreviations
-specified by language and 'set'.
+specified by language and 'set'. Word boundaries will be detected using title case
+and non-letters.
 
-Word boundaries will detect camel case and non-letter
+Hosted on Github - https://github.com/dnnrly/abbreviate
+
+If you spot a bug, feel free to raise an issue or fix it and make a pull
+request. We're really interested to see more abbreviations added or corrected.
 
 Usage:
-  abbreviate [string] [flags]
+  abbreviate [action] [flags]
+  abbreviate [command]
+
+Available Commands:
+  camel       Abbreviate a string and convert it to camel case
+  help        Help about any command
+  original    Abbreviate the string using the original word boundary seperators
+  pascal      Abbreviate a string and convert it to pascal case
+  snake       Abbreviate a string and convert it to snake case
 
 Flags:
   -c, --custom string     Custom abbreviation set
@@ -39,19 +51,17 @@ Flags:
       --list              List all abbreviate sets by language
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
   -n, --newline           Add newline to the end of the string (default true)
-      --seperator string  Seperator between words and abbreviations when using 'snake' case (default "_")
-      --style             Convert the outputted string to the specified style. Possible values are original, pascal,
-                          camel, and snake. For snake case, use the --seperator option to set the seperator.
-                          Default is "original" which retains the original seperation between words.
   -s, --set string        Abbreviation set (default "common")
+
+Use "abbreviate [command] --help" for more information about a command.
 ```
 
 Examples:
 ```
-$ abbreviate strategy-limited
+$ abbreviate original strategy-limited
 stg-ltd
 
-$ abbreviate strategy-limited --max 11
+$ abbreviate original strategy-limited --max 11
 strategy-ltd
 ```
 
