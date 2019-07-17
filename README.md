@@ -40,7 +40,7 @@ Usage:
 Available Commands:
   camel       Abbreviate a string and convert it to camel case
   help        Help about any command
-  original    Abbreviate the string using the original word boundary seperators
+  original    Abbreviate the string using the original word boundary separators
   pascal      Abbreviate a string and convert it to pascal case
   snake       Abbreviate a string and convert it to snake case
 

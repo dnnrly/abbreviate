@@ -47,5 +47,5 @@ if this means that the string will end up longer.`,
 
 func init() {
 	rootCmd.AddCommand(snakeCmd)
-	snakeCmd.Flags().StringVar(&optSnakeSeperator, "seperator", optSnakeSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
+	snakeCmd.Flags().StringVar(&optSnakeSeperator, "separator", optSnakeSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
 }

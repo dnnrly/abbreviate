@@ -24,8 +24,8 @@
     [ $result == "strategy_ltd" ]
 }
 
-@test "Snake case with seperator" {
-    result="$(./abbreviate snake --max 15 --newline=false --seperator + strategy-limited)"
+@test "Snake case with separator" {
+    result="$(./abbreviate snake --max 15 --newline=false --separator + strategy-limited)"
     [ $result == "strategy+ltd" ]
 }
 

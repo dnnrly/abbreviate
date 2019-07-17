@@ -14,7 +14,7 @@ const (
 )
 
 // Sequences represents a string that has been broken in to different parts of
-// words and seperators
+// words and separators
 type Sequences []string
 
 // NewSequences generates a new Sequences from the string passed in
@@ -118,9 +118,9 @@ func AsOriginal(matcher *Matcher, original string, max int) string {
 
 // AsSnake discovers words using camel case and non letter characters,
 // starting from the back until the string has less than 'max' characters
-// or it can't shorten any more. This inserts the specified seperator
+// or it can't shorten any more. This inserts the specified separator
 // where a sequence is not alpha-numeric
-func AsSnake(matcher *Matcher, original, seperator string, max int) string {
+func AsSnake(matcher *Matcher, original, separator string, max int) string {
 	if original == "" {
 		return ""
 	}
@@ -133,7 +133,7 @@ func AsSnake(matcher *Matcher, original, seperator string, max int) string {
 		if unicode.IsLetter(ch) || unicode.IsNumber(ch) {
 			shortened.AddBack(strings.ToLower(str))
 			if i < len(parts)-1 {
-				shortened.AddBack(seperator)
+				shortened.AddBack(separator)
 			}
 		}
 	}

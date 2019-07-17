@@ -25,7 +25,7 @@ import (
 // originalCmd represents the original command
 var originalCmd = &cobra.Command{
 	Use:   "original [string]",
-	Short: "Abbreviate the string using the original word boundary seperators",
+	Short: "Abbreviate the string using the original word boundary separators",
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
 		abbr := domain.AsOriginal(matcher, args[0], optMax)
