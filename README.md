@@ -63,6 +63,9 @@ stg-ltd
 
 $ abbreviate original strategy-limited --max 11
 strategy-ltd
+
+$ abbreviate camel --max 99 strategy-limited
+strategyLimited
 ```
 
 ## Code of Conduct
