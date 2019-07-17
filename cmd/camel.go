@@ -34,7 +34,7 @@ var camelCmd = &cobra.Command{
 
 		ch := string(abbr[0])
 
-		fmt.Printf("%s%s", strings.ToLower(ch), abbr[1:len(abbr)])
+		fmt.Printf("%s%s", strings.ToLower(ch), abbr[1:])
 		if optNewline {
 			fmt.Printf("\n")
 		}
