@@ -39,6 +39,10 @@ Flags:
       --list              List all abbreviate sets by language
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
   -n, --newline           Add newline to the end of the string (default true)
+      --seperator string  Seperator between words and abbreviations when using 'snake' case (default "_")
+      --style             Convert the outputted string to the specified style. Possible values are original, pascal,
+                          camel, and snake. For snake case, use the --seperator option to set the seperator.
+                          Default is "original" which retains the original seperation between words.
   -s, --set string        Abbreviation set (default "common")
 ```
 

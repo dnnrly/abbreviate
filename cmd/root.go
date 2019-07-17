@@ -15,12 +15,12 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/gobuffalo/packr/v2"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/dnnrly/abbreviate/domain"
@@ -34,12 +34,13 @@ var (
 	optCustom   = ""
 	optMax      = 0
 
-	data = packr.New("abbreviate", "../data")
+	data    = packr.New("abbreviate", "../data")
+	matcher *domain.Matcher
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "abbreviate [string]",
+	Use:   "abbreviate [action]",
 	Short: "Shorten your string using common abbreviations",
 	Long: `This tool will attempt to shorten the string provided using common abbreviations
 specified by language and 'set'. Word boundaries will be detected using title case
@@ -49,14 +50,7 @@ Hosted on Github - https://github.com/dnnrly/abbreviate
 
 If you spot a bug, feel free to raise an issue or fix it and make a pull
 request. We're really interested to see more abbreviations added or corrected.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if !optList && len(args) != 1 {
-			return errors.New("requires a string to abbreviate")
-		}
-
-		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if optList {
 			fmt.Printf("Available languages and abbreviation sets:\n")
 			items := data.List()
@@ -79,13 +73,16 @@ request. We're really interested to see more abbreviations added or corrected.`,
 			os.Exit(1)
 		}
 
-		matcher := domain.NewMatcherFromString(all)
-		abbr := domain.ShortenFromBack(matcher, args[0], optMax)
-
-		fmt.Printf("%s", abbr)
-		if optNewline {
-			fmt.Printf("\n")
-		}
+		matcher = domain.NewMatcherFromString(all)
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Fprintf(
+			os.Stderr,
+			`Error: use one of the actions to abbreviate a string.
+Run 'abbreviate --help' for usage.
+`,
+		)
+		os.Exit(1)
 	},
 }
 
@@ -99,10 +96,18 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&optList, "list", "", optList, "List all abbreviate sets by language")
-	rootCmd.Flags().BoolVarP(&optNewline, "newline", "n", optNewline, "Add newline to the end of the string")
-	rootCmd.Flags().StringVarP(&optLanguage, "language", "l", optLanguage, "Language to select")
-	rootCmd.Flags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
-	rootCmd.Flags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
-	rootCmd.Flags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
+	rootCmd.PersistentFlags().BoolVarP(&optList, "list", "", optList, "List all abbreviate sets by language")
+	rootCmd.PersistentFlags().BoolVarP(&optNewline, "newline", "n", optNewline, "Add newline to the end of the string")
+	rootCmd.PersistentFlags().StringVarP(&optLanguage, "language", "l", optLanguage, "Language to select")
+	rootCmd.PersistentFlags().StringVarP(&optSet, "set", "s", optSet, "Abbreviation set")
+	rootCmd.PersistentFlags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
+	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
+}
+
+func validateArgPresent(cmd *cobra.Command, args []string) error {
+	if !optList && len(args) != 1 {
+		return errors.New("requires a string to abbreviate")
+	}
+
+	return nil
 }

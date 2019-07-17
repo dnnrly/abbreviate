@@ -4,10 +4,12 @@ import (
 	"strings"
 )
 
+// Matcher finds matches between words and abbreviations
 type Matcher struct {
 	items map[string]string
 }
 
+// Match against a list of mappings
 func (matcher Matcher) Match(word string) string {
 	if abbr, found := matcher.items[word]; found {
 		return abbr
@@ -16,6 +18,8 @@ func (matcher Matcher) Match(word string) string {
 	return word
 }
 
+// NewMatcherFromString creates a new matcher from newline
+// seperated data
 func NewMatcherFromString(data string) *Matcher {
 	items := map[string]string{}
 
