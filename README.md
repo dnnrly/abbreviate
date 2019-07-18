@@ -42,6 +42,7 @@ Available Commands:
   help        Help about any command
   original    Abbreviate the string using the original word boundary separators
   pascal      Abbreviate a string and convert it to pascal case
+  print       Print abbreviations in this set
   snake       Abbreviate a string and convert it to snake case
 
 Flags:

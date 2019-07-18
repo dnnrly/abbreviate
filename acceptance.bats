@@ -54,8 +54,15 @@
     run ./abbreviate original --custom ./unknown.txt longer
     [ "$status" -eq 1 ]
     [ "${lines[0]}" = "Unable to open custom abbreviations file: open ./unknown.txt: no such file or directory" ]
+    rm -f custom.txt
 }
 
-function teardown() {
+@test "Prints abbreviations" {
+    echo short=longer > custom.txt
+    echo an=another >> custom.txt
+    run ./abbreviate print --custom ./custom.txt
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "an=another" ]
+    [ "${lines[1]}" = "short=longer" ]
     rm -f custom.txt
 }
