@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -61,16 +62,32 @@ request. We're really interested to see more abbreviations added or corrected.`,
 			os.Exit(0)
 		}
 
-		path := fmt.Sprintf("%s/%s", optLanguage, optSet)
-		all, err := data.FindString(path)
-		if err != nil {
-			fmt.Fprintf(
-				os.Stderr,
-				"Unable to find language '%s' with set '%s'.\n",
-				optLanguage,
-				optSet,
-			)
-			os.Exit(1)
+		all := ""
+		if optCustom == "" {
+			path := fmt.Sprintf("%s/%s", optLanguage, optSet)
+			err := error(nil)
+			all, err = data.FindString(path)
+			if err != nil {
+				fmt.Fprintf(
+					os.Stderr,
+					"Unable to find language '%s' with set '%s'.\n",
+					optLanguage,
+					optSet,
+				)
+				os.Exit(1)
+			}
+		} else {
+			buf, err := ioutil.ReadFile(optCustom)
+			if err != nil {
+				fmt.Fprintf(
+					os.Stderr,
+					"Unable to open custom abbreviations file: %s\n",
+					err,
+				)
+				os.Exit(1)
+			}
+
+			all = string(buf)
 		}
 
 		matcher = domain.NewMatcherFromString(all)
