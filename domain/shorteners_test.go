@@ -29,12 +29,12 @@ ltd=limited`)
 		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", max: 0, want: "aBC"},
 		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", max: 8, want: "AaaBbbC"},
 		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", max: 0, want: "ABBbC"},
-		{name: "Mixed camel case and non word seperators", original: "AaaBbb-ccc", max: 0, want: "AB-c"},
-		{name: "Mixed camel case and non word seperators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "A-B-C"},
+		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", max: 0, want: "AB-c"},
+		{name: "Mixed camel case and non word separators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "A-B-C"},
 		{name: "Real example, full short", original: "strategy-limited", max: 0, want: "stg-ltd"},
 		{name: "Real example, shorter than total", original: "strategy-limited", max: 13, want: "strategy-ltd"},
 		{name: "Real example, max same as shorted", original: "strategy-limited", max: 12, want: "strategy-ltd"},
-		{name: "Real example, max on seperator", original: "strategy-limited", max: 9, want: "stg-ltd"},
+		{name: "Real example, max on separator", original: "strategy-limited", max: 9, want: "stg-ltd"},
 		{name: "Real example, max shorter than first word", original: "strategy-limited", max: 6, want: "stg-ltd"},
 		{name: "Real example, no short", original: "strategy-limited", max: 99, want: "strategy-limited"},
 		{name: "Real example, with numbers #1", original: "strategy-limited99", max: 15, want: "strategy-ltd99"},
@@ -160,34 +160,34 @@ ltd=limited`)
 	tests := []struct {
 		name      string
 		original  string
-		seperator string
+		separator string
 		max       int
 		want      string
 	}{
-		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", seperator: "_", max: 0, want: "a_b_c"},
-		{name: "Partial abbreviation with '_'", original: "aaa-bbb-ccc", seperator: "_", max: 10, want: "aaa_bbb_c"},
-		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", seperator: "_", max: 99, want: "aaa_bbb_ccc"},
-		{name: "Length is 0 with camel case", original: "AaaBbbCcc", seperator: "_", max: 0, want: "a_b_c"},
-		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", seperator: "_", max: 0, want: "a_b_c"},
-		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", seperator: "_", max: 8, want: "aaa_b_c"},
-		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", seperator: "_", max: 0, want: "a_b_bb_c"},
-		{name: "Mixed camel case and non word seperators", original: "AaaBbb-ccc", seperator: "_", max: 0, want: "a_b_c"},
-		{name: "Mixed camel case and non word seperators with same borders", seperator: "_", original: "Aaa-Bbb-Ccc", max: 0, want: "a_b_c"},
-		{name: "Real example, full short", original: "strategy-limited", seperator: "_", max: 0, want: "stg_ltd"},
-		{name: "Real example, shorter than total", original: "strategy-limited", seperator: "_", max: 13, want: "strategy_ltd"},
-		{name: "Real example, max same as shorted", original: "strategy-limited", seperator: "_", max: 12, want: "strategy_ltd"},
-		{name: "Real example, max on seperator", original: "strategy-limited", seperator: "_", max: 9, want: "stg_ltd"},
-		{name: "Real example, max shorter than first word", original: "strategy-limited", seperator: "_", max: 6, want: "stg_ltd"},
-		{name: "Real example, no short", original: "strategy-limited", seperator: "_", max: 99, want: "strategy_limited"},
-		{name: "Real example, with numbers #1", original: "strategy-limited99", seperator: "_", max: 15, want: "strategy_ltd_99"},
-		{name: "Real example, with numbers #2", original: "strategy-limited-99", seperator: "_", max: 15, want: "strategy_ltd_99"},
-		{name: "Multiple seperators", original: "strategy---limited--99", seperator: "_", max: 15, want: "strategy_ltd_99"},
-		{name: "Other seperator", original: "strategy-limited-99", seperator: "+", max: 15, want: "strategy+ltd+99"},
-		{name: "Empty string", original: "", seperator: "+", max: 15, want: ""},
+		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", separator: "_", max: 0, want: "a_b_c"},
+		{name: "Partial abbreviation with '_'", original: "aaa-bbb-ccc", separator: "_", max: 10, want: "aaa_bbb_c"},
+		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", separator: "_", max: 99, want: "aaa_bbb_ccc"},
+		{name: "Length is 0 with camel case", original: "AaaBbbCcc", separator: "_", max: 0, want: "a_b_c"},
+		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", separator: "_", max: 0, want: "a_b_c"},
+		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", separator: "_", max: 8, want: "aaa_b_c"},
+		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", separator: "_", max: 0, want: "a_b_bb_c"},
+		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", separator: "_", max: 0, want: "a_b_c"},
+		{name: "Mixed camel case and non word separators with same borders", separator: "_", original: "Aaa-Bbb-Ccc", max: 0, want: "a_b_c"},
+		{name: "Real example, full short", original: "strategy-limited", separator: "_", max: 0, want: "stg_ltd"},
+		{name: "Real example, shorter than total", original: "strategy-limited", separator: "_", max: 13, want: "strategy_ltd"},
+		{name: "Real example, max same as shorted", original: "strategy-limited", separator: "_", max: 12, want: "strategy_ltd"},
+		{name: "Real example, max on separator", original: "strategy-limited", separator: "_", max: 9, want: "stg_ltd"},
+		{name: "Real example, max shorter than first word", original: "strategy-limited", separator: "_", max: 6, want: "stg_ltd"},
+		{name: "Real example, no short", original: "strategy-limited", separator: "_", max: 99, want: "strategy_limited"},
+		{name: "Real example, with numbers #1", original: "strategy-limited99", separator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Real example, with numbers #2", original: "strategy-limited-99", separator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Multiple separators", original: "strategy---limited--99", separator: "_", max: 15, want: "strategy_ltd_99"},
+		{name: "Other separator", original: "strategy-limited-99", separator: "+", max: 15, want: "strategy+ltd+99"},
+		{name: "Empty string", original: "", separator: "+", max: 15, want: ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSnake(matcher, tt.original, tt.seperator, tt.max); got != tt.want {
+			if got := AsSnake(matcher, tt.original, tt.separator, tt.max); got != tt.want {
 				t.Errorf("AsSnake() = %v, want %v", got, tt.want)
 			}
 		})
@@ -215,12 +215,12 @@ ltd=limited`)
 		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", max: 0, want: "ABC"},
 		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", max: 8, want: "AaaBbbC"},
 		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", max: 0, want: "ABBbC"},
-		{name: "Mixed camel case and non word seperators", original: "AaaBbb-ccc", max: 0, want: "ABC"},
-		{name: "Mixed camel case and non word seperators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "ABC"},
+		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", max: 0, want: "ABC"},
+		{name: "Mixed camel case and non word separators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "ABC"},
 		{name: "Real example, full short", original: "strategy-limited", max: 0, want: "StgLtd"},
 		{name: "Real example, shorter than total", original: "strategy-limited", max: 13, want: "StrategyLtd"},
 		{name: "Real example, max same as shorted", original: "strategy-limited", max: 12, want: "StrategyLtd"},
-		{name: "Real example, max on seperator", original: "strategy-limited", max: 9, want: "StgLtd"},
+		{name: "Real example, max on separator", original: "strategy-limited", max: 9, want: "StgLtd"},
 		{name: "Real example, max shorter than first word", original: "strategy-limited", max: 6, want: "StgLtd"},
 		{name: "Real example, no short", original: "strategy-limited", max: 99, want: "StrategyLimited"},
 		{name: "Real example, with numbers #1", original: "strategy-limited99", max: 15, want: "StrategyLtd99"},
