@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -16,6 +18,19 @@ func (matcher Matcher) Match(word string) string {
 	}
 
 	return word
+}
+
+// All of the abbreviations in this set in order of the linked word
+func (matcher Matcher) All() []string {
+	all := []string{}
+
+	for k, v := range matcher.items {
+		all = append(all, fmt.Sprintf("%s=%s", v, k))
+	}
+
+	sort.Strings(all)
+
+	return all
 }
 
 // NewMatcherFromString creates a new matcher from newline

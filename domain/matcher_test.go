@@ -31,3 +31,21 @@ func TestMatcher_NewMatcherFromString(t *testing.T) {
 	assert.Equal(t, "d", m.Match("d"))
 	assert.Equal(t, "dd", m.Match("dd"))
 }
+
+func TestMatcher_All(t *testing.T) {
+	m := NewMatcherFromString(`abbr=abbreviation
+1=a
+2=b
+
+3
+=c
+4=d=dd
+
+`)
+	expected := []string{
+		"1=a",
+		"2=b",
+		"abbr=abbreviation",
+	}
+	assert.Equal(t, expected, m.All())
+}
