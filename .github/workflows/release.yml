@@ -1,0 +1,9 @@
+name: Release workflow
+on: release
+jobs:
+    release:
+        name: Release abbreviate
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@master
+            - uses: ./scripts/release
