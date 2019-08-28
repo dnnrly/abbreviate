@@ -1,5 +1,5 @@
 name: Release workflow
-on: release
+on: push
 jobs:
     release:
         name: Release abbreviate
