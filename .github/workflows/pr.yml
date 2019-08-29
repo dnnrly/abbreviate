@@ -7,3 +7,4 @@ jobs:
         steps:
             - uses: actions/checkout@master
             - uses: ./scripts/action
+            - run: make ci-test build acceptance-test
