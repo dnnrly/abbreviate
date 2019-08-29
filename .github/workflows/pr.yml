@@ -1,8 +1,8 @@
-name: Release workflow
+name: Validate for PR
 on: push
 jobs:
-    release:
-        name: Release abbreviate
+    validate:
+        name: Validate abbreviate
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@master
