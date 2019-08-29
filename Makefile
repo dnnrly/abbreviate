@@ -1,6 +1,6 @@
 CURL_BIN ?= curl
 GO_BIN ?= go
-LINT_BIN ?= 
+LINT_BIN ?= golangci-lint
 PACKR_BIN ?= ./bin/packr2
 GORELEASER_BIN ?= goreleaser
 
@@ -36,7 +36,7 @@ clean-deps:
 	./tmp/bats/install.sh .
 
 test-deps: ./bin/bats
-	$(CURL_BIN) -L https://git.io/vp6lP | sh
+	$(CURL_BIN) -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.17.1
 	$(GO_BIN) get ./...
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
