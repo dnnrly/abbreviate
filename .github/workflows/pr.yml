@@ -7,4 +7,4 @@ jobs:
         steps:
             - uses: actions/checkout@master
             - uses: ./scripts/action
-            - run: make PACKR_BIN=packr2 ci-test build acceptance-test
+            - run: find / -name packr2 && make PACKR_BIN=packr2 ci-test build acceptance-test

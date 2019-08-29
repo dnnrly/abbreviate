@@ -1,6 +1,6 @@
 CURL_BIN ?= curl
 GO_BIN ?= go
-LINT_BIN ?= gometalinter
+LINT_BIN ?= 
 PACKR_BIN ?= ./bin/packr2
 GORELEASER_BIN ?= goreleaser
 
@@ -62,7 +62,7 @@ ci-test:
 	$(GO_BIN) test $(GO_MOD_PARAM) -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 lint:
-	$(LINT_BIN) --vendor ./... --deadline=1m --skip=internal
+	$(LINT_BIN) run
 
 release: clean
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
