@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+*.swp
 bin/
 libexec/
 share/
