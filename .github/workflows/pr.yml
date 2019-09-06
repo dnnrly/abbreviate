@@ -1,5 +1,8 @@
 name: Validate for PR
-on: push
+on:
+    push:
+        branches:
+            - master
 jobs:
     validate:
         name: Validate abbreviate
@@ -8,8 +11,6 @@ jobs:
             - uses: actions/checkout@master
             - uses: actions/setup-go@v1
               with:
-                go-version: '1.12'
+                go-version: '1.13'
               #            - uses/scripts/action
             - run: make ci-test deps build acceptance-test
-              env:
-                GO111MODULE: on
