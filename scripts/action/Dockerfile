@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.13
 
 ENV GO111MODULE on
 ENV GOPROXY https://proxy.golang.org
