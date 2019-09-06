@@ -1,7 +1,5 @@
 name: Validate for PR
-push:
-    branches:
-        - master
+on: push
 jobs:
     validate:
         name: Validate abbreviate

@@ -1,7 +1,8 @@
 name: Release workflow
-push:
-    branches:
-        - [^master]
+on:
+    push:
+        branches:
+            - master
 jobs:
     release:
         name: Release abbreviate
