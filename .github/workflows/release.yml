@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-go@v1
+        env:
+          GO111MODULE: on
         with:
           go-version: '1.13'
       - run: make test
