@@ -23,6 +23,10 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@master
+    - name: Install Deps
+      run: make build-deps
+      env:
+        GO111MODULE: on
     - name: goreleaser
       uses: docker://goreleaser/goreleaser
       env:
