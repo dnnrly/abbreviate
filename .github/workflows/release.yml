@@ -1,9 +1,8 @@
 name: Release workflow
-#on:
-#  push:
-#    tags:
-#      - 'v*'
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
 jobs:
   validate:
     name: Validate
@@ -28,7 +27,7 @@ jobs:
       env:
         GO111MODULE: on
     - name: Perform release
-      run: ./bin/goreleaser release --snapshot
+      run: ./bin/goreleaser release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GO111MODULE: on
