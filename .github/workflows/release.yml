@@ -31,4 +31,5 @@ jobs:
       run: ./bin/goreleaser release --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GO111MODULE: on
       if: success()
