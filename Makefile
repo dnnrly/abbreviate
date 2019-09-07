@@ -45,6 +45,9 @@ endif
 ./bin:
 	mkdir ./bin
 
+./tmp:
+	mkdir ./tmp
+
 ./bin/packr2: ./bin
 	cd vendor/github.com/gobuffalo/packr/v2/packr2; go build -pkgdir $(BASE_DIR)/vendor -o $(BASE_DIR)/bin/packr2
 
