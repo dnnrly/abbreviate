@@ -48,7 +48,12 @@ endif
 ./bin/packr2: ./bin
 	cd vendor/github.com/gobuffalo/packr/v2/packr2; go build -pkgdir $(BASE_DIR)/vendor -o $(BASE_DIR)/bin/packr2
 
-build-deps: ./bin/packr2
+./bin/goreleaser: ./bin ./tmp
+	$(CURL_BIN) --fail -L -o ./tmp/goreleaser.tar.gz https://github.com/goreleaser/goreleaser/releases/download/v0.117.2/goreleaser_Linux_x86_64.tar.gz
+	gunzip -f ./tmp/goreleaser.tar.gz
+	tar -C ./bin -xvf ./tmp/goreleaser.tar
+
+build-deps: ./bin/packr2 ./bin/goreleaser
 
 deps: build-deps test-deps
 

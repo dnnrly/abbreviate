@@ -6,7 +6,7 @@ name: Release workflow
 on: push
 jobs:
   validate:
-    name: Validate abbreviate
+    name: Validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -27,10 +27,8 @@ jobs:
       run: make build-deps
       env:
         GO111MODULE: on
-    - name: goreleaser
-      uses: docker://goreleaser/goreleaser
+    - name: Perform release
+      run: ./bin/goreleaser release --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: release --snapshot
       if: success()
