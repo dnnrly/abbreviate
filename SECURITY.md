@@ -12,7 +12,7 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-To report a security vulnerability to `newsapi-python`,
+To report a security vulnerability to `abbreviate`,
 please [file an issue](https://github.com/dnnrly/abbreviate/issues/new?assignees=&labels=&template=security.md&title=)
 at this repository's Issues page.
 
