@@ -6,6 +6,8 @@ Shorten your strings using common abbreviations.
 [![godoc](https://godoc.org/github.com/dnnrly/abbreviate?status.svg)](http://godoc.org/github.com/dnnrly/abbreviate)
 [![report card](https://goreportcard.com/badge/github.com/dnnrly/abbreviate)](https://goreportcard.com/report/github.com/dnnrly/abbreviate)
 
+<button class="button-save large"><a href="https://tidelift.com/subscription/pkg/go-github-com-dnnrly-abbreviate?utm_source=go-github-com-dnnrly-abbreviate&utm_medium=referral&utm_campaign=enterprise">Supported by Tidelift</a></button>
+
 ## Motivation
 
 This tool comes out of a frustration of the name of resources (in my specific
@@ -75,6 +77,12 @@ This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDU
 Pull requests are welcome. See the [contributing guide](CONTRIBUTING.md) for more details.
 
 Please make sure to update tests as appropriate.
+
+## github.com/dnnrly/abbreviate for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of github.com/dnnrly/abbreviate and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/go-github-com-dnnrly-abbreviate?utm_source=go-github-com-dnnrly-abbreviate&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
 
 ## License
 [Apache 2](https://choosealicense.com/licenses/apache-2.0/)
