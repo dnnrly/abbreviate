@@ -53,5 +53,10 @@ CanonifyURLs=true
   url = "https://godoc.org/github.com/dnnrly/abbreviate"
   weight = 11
 
+[[menu.shortcuts]] 
+  name = "<i class='fab fa-user-tie'></i> For Enterprise"
+  url = "https://tidelift.com/subscription/pkg/go-github-com-dnnrly-abbreviate?utm_source=go-github-com-dnnrly-abbreviate&utm_medium=referral&utm_campaign=enterprise"
+  weight = 12
+
 [outputs]
   home = [ "HTML", "RSS", "JSON"]
