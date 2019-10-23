@@ -6,6 +6,7 @@ on:
     - master
     paths:
     - 'docs/**'
+    - '.github/workflows/gh-pages.yml'
 
 jobs:
   build-deploy:
@@ -26,7 +27,7 @@ jobs:
       run: mkdir -p ./docs/public && touch ./docs/public/.nojekyll
 
     - name: Build
-      run: hugo --gc --minify --cleanDestinationDir -s blog -d public
+      run: cd docs && hugo -t learn -d public --gc --minify --cleanDestinationDir
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v2.3.1
@@ -35,4 +36,4 @@ jobs:
       env:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./docs
+        PUBLISH_DIR: ./docs/public
