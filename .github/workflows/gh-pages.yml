@@ -23,7 +23,7 @@ jobs:
         git submodule sync && git submodule update --init
 
     - name: Disable Jekyll
-      run: touch ./docs/public/.nojekyll
+      run: mkdir -p ./docs/public && touch ./docs/public/.nojekyll
 
     - name: Build
       run: hugo --gc --minify --cleanDestinationDir -s blog -d public
