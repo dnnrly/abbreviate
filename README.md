@@ -6,6 +6,11 @@ Shorten your strings using common abbreviations.
 [![godoc](https://godoc.org/github.com/dnnrly/abbreviate?status.svg)](http://godoc.org/github.com/dnnrly/abbreviate)
 [![report card](https://goreportcard.com/badge/github.com/dnnrly/abbreviate)](https://goreportcard.com/report/github.com/dnnrly/abbreviate)
 
+![GitHub watchers](https://img.shields.io/github/watchers/dnnrly/abbreviate?style=social)
+![GitHub stars](https://img.shields.io/github/stars/dnnrly/abbreviate?style=social)
+[![Twitter URL](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fdnnrly%2Fabbreviate)](https://twitter.com/intent/tweet?url=https://github.com/dnnrly/abbreviate)
+
+
 <button class="button-save large"><a href="https://tidelift.com/subscription/pkg/go-github-com-dnnrly-abbreviate?utm_source=go-github-com-dnnrly-abbreviate&utm_medium=referral&utm_campaign=enterprise">Supported by Tidelift</a></button>
 
 ## Motivation
