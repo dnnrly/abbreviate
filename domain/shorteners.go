@@ -96,31 +96,31 @@ func (all Sequences) Len() int {
 type Shortener func(matcher Matcher, original string, max int) string
 
 // AsOriginal discovers words using camel case and non letter characters,
-// starting from the back until the string has less than 'max' characters
+// starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more.
-func AsOriginal(matcher *Matcher, original string, max int) string {
+func AsOriginal(matcher *Matcher, original string, max int, frmFront bool) string {
 	if len(original) < max {
 		return original
 	}
 
 	shortened := NewSequences(original)
-	for pos := len(shortened) - 1; pos >= 0 && shortened.Len() > max; pos-- {
+	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
 		abbr := matcher.Match(strings.ToLower(str))
 		if isTitleCase(str) {
 			abbr = makeTitle(abbr)
 		}
 		shortened[pos] = abbr
-	}
+	})
 
 	return shortened.String()
 }
 
 // AsSnake discovers words using camel case and non letter characters,
-// starting from the back until the string has less than 'max' characters
+// starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. This inserts the specified separator
 // where a sequence is not alpha-numeric
-func AsSnake(matcher *Matcher, original, separator string, max int) string {
+func AsSnake(matcher *Matcher, original, separator string, max int, frmFront bool) string {
 	if original == "" {
 		return ""
 	}
@@ -142,20 +142,20 @@ func AsSnake(matcher *Matcher, original, separator string, max int) string {
 		return shortened.String()
 	}
 
-	for pos := len(shortened) - 1; pos >= 0 && shortened.Len() > max; pos-- {
+	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
 		abbr := matcher.Match(str)
 		shortened[pos] = abbr
-	}
+	})
 
 	return shortened.String()
 }
 
 // AsPascal discovers words using camel case and non letter characters,
-// starting from the back until the string has less than 'max' characters
+// starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. Word boundaries are a capital letter at
 // the start of each word
-func AsPascal(matcher *Matcher, original string, max int) string {
+func AsPascal(matcher *Matcher, original string, max int, frmFront bool) string {
 	if original == "" {
 		return ""
 	}
@@ -177,12 +177,12 @@ func AsPascal(matcher *Matcher, original string, max int) string {
 		return shortened.String()
 	}
 
-	for pos := len(shortened) - 1; pos >= 0 && shortened.Len() > max; pos-- {
+	shorten(shortened, max, frmFront, func(pos int) {
 		str := strings.ToLower(shortened[pos])
 		abbr := matcher.Match(str)
 		abbr = makeTitle(abbr)
 		shortened[pos] = abbr
-	}
+	})
 
 	return shortened.String()
 }
@@ -227,4 +227,17 @@ func lastChar(str string) (string, rune) {
 	}
 
 	return str[0 : l-1], []rune(str)[l-1:][0]
+}
+
+func shorten(sequences Sequences, max int, frmFront bool, shorten func(int)) Sequences {
+	if frmFront {
+		for pos := 0; pos < len(sequences) && sequences.Len() > max; pos++ {
+			shorten(pos)
+		}
+	} else {
+		for pos := len(sequences) - 1; pos >= 0 && sequences.Len() > max; pos-- {
+			shorten(pos)
+		}
+	}
+	return sequences
 }
