@@ -53,6 +53,7 @@ Available Commands:
 
 Flags:
   -c, --custom string     Custom abbreviation set
+      --from-front        Shorten from the front
   -h, --help              help for abbreviate
   -l, --language string   Language to select (default "en-us")
       --list              List all abbreviate sets by language
@@ -68,8 +69,11 @@ Examples:
 $ abbreviate original strategy-limited
 stg-ltd
 
-$ abbreviate original strategy-limited --max 11
+$ abbreviate original --max 11 strategy-limited
 strategy-ltd
+
+$ abbreviate original --max 11 --from-front strategy-limited
+stg-limited
 
 $ abbreviate camel --max 99 strategy-limited
 strategyLimited
