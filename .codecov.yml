@@ -1,6 +1,2 @@
 coverage:
   range: "60...70"
-
-ignore:
-  - "*-packr.go"
-  - "packrd"

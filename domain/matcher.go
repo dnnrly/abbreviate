@@ -11,6 +11,13 @@ type Matcher struct {
 	items map[string]string
 }
 
+// NewMatcher creates a new matcher of abbreviation mappings
+func NewMatcher(items map[string]string) *Matcher {
+	return &Matcher{
+		items: items,
+	}
+}
+
 // Match against a list of mappings
 func (matcher Matcher) Match(word string) string {
 	if abbr, found := matcher.items[word]; found {

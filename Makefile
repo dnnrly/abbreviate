@@ -1,14 +1,12 @@
 CURL_BIN ?= curl
 GO_BIN ?= go
 LINT_BIN ?= golangci-lint
-PACKR_BIN ?= ./bin/packr2
 GORELEASER_BIN ?= goreleaser
 
 PUBLISH_PARAM?=
-GO_MOD_PARAM?=-mod vendor
+GO_MOD_PARAM?=
 TMP_DIR=?/tmp
 
-PACKR_VERSION = 2.1.0
 BASE_DIR=$(shell pwd)
 
 export PATH := ./bin:$(PATH)
@@ -16,11 +14,9 @@ export PATH := ./bin:$(PATH)
 install: deps
 
 build:
-	$(PACKR_BIN)
 	$(GO_BIN) build $(GO_MOD_PARAM)
 
 clean:
-	$(PACKR_BIN) clean
 	rm -f abbreviate
 	rm -rf dist
 
@@ -29,7 +25,6 @@ clean-deps:
 	rm -rf ./tmp
 	rm -rf ./libexec
 	rm -rf ./share
-	rm packr_${PACKR_VERSION}_linux_amd64.tar.gz
 
 ./bin/bats:
 	git clone https://github.com/sstephenson/bats.git ./tmp/bats
@@ -48,15 +43,12 @@ endif
 ./tmp:
 	mkdir ./tmp
 
-./bin/packr2: ./bin
-	cd vendor/github.com/gobuffalo/packr/v2/packr2; go build -pkgdir $(BASE_DIR)/vendor -o $(BASE_DIR)/bin/packr2
-
 ./bin/goreleaser: ./bin ./tmp
 	$(CURL_BIN) --fail -L -o ./tmp/goreleaser.tar.gz https://github.com/goreleaser/goreleaser/releases/download/v0.117.2/goreleaser_Linux_x86_64.tar.gz
 	gunzip -f ./tmp/goreleaser.tar.gz
 	tar -C ./bin -xvf ./tmp/goreleaser.tar
 
-build-deps: ./bin/packr2 ./bin/goreleaser
+build-deps: ./bin/goreleaser
 
 deps: build-deps test-deps
 
