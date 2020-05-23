@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
+	"sort"
 
-	"github.com/gobuffalo/packr/v2"
 	"github.com/spf13/cobra"
 
+	"github.com/dnnrly/abbreviate/data"
 	"github.com/dnnrly/abbreviate/domain"
 )
 
@@ -36,7 +36,6 @@ var (
 	optMax      = 0
 	optFrmFront = false
 
-	data    = packr.New("abbreviate", "../data")
 	matcher *domain.Matcher
 )
 
@@ -55,29 +54,30 @@ request. We're really interested to see more abbreviations added or corrected.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if optList {
 			fmt.Printf("Available languages and abbreviation sets:\n")
-			items := data.List()
-			for _, v := range items {
-				parts := strings.Split(v, "/")
-				fmt.Printf("--language %s --set %s\n", parts[0], parts[1])
+			languages := []string{}
+			for l := range data.Abbreviations {
+				languages = append(languages, l)
+			}
+			sort.Strings(languages)
+
+			for _, l := range languages {
+				sets := []string{}
+				for s := range data.Abbreviations[l] {
+					sets = append(sets, s)
+				}
+
+				sort.Strings(sets)
+				for _, s := range sets {
+					fmt.Printf("--language %s --set %s\n", l, s)
+				}
 			}
 			os.Exit(0)
 		}
 
-		all := ""
 		if optCustom == "" {
-			path := fmt.Sprintf("%s/%s", optLanguage, optSet)
-			err := error(nil)
-			all, err = data.FindString(path)
-			if err != nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"Unable to find language '%s' with set '%s'.\n",
-					optLanguage,
-					optSet,
-				)
-				os.Exit(1)
-			}
+			matcher = data.Abbreviations[optLanguage][optSet]
 		} else {
+			all := ""
 			buf, err := ioutil.ReadFile(optCustom)
 			if err != nil {
 				fmt.Fprintf(
@@ -89,9 +89,8 @@ request. We're really interested to see more abbreviations added or corrected.`,
 			}
 
 			all = string(buf)
+			matcher = domain.NewMatcherFromString(all)
 		}
-
-		matcher = domain.NewMatcherFromString(all)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(

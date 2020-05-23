@@ -3,7 +3,6 @@ FROM golang:1.13
 ENV GO111MODULE on
 ENV GOPROXY https://proxy.golang.org
 
-RUN go get github.com/gobuffalo/packr/v2/packr2
 RUN git clone https://github.com/sstephenson/bats.git /tmp/bats \
   && /tmp/bats/install.sh /usr/local
 

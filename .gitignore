@@ -12,10 +12,6 @@ tmp/
 dist/
 abbreviate
 
-# packr
-packrd/
-*-packr.go
-
 # Test binary, build with `go test -c`
 *.test
 
