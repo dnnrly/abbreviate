@@ -22,20 +22,20 @@ import (
 )
 
 var (
-	optSnakeSeperator = "_"
+	optKebabSeperator = "-"
 )
 
-// snakeCmd represents the snake command
-var snakeCmd = &cobra.Command{
-	Use:   "snake [string]",
-	Short: "Abbreviate a string and convert it to snake case",
-	Long: `Abbreviate a string and convert it to snake case.
+// kebabCmd represents the kebab command
+var kebabCmd = &cobra.Command{
+	Use:   "kebab [string]",
+	Short: "Abbreviate a string and convert it to kebab case",
+	Long: `Abbreviate a string and convert it to kebab case.
 
-Where a string is not shortened, it will be converted to snake case anyway, even
+Where a string is not shortened, it will be converted to kebab case anyway, even
 if this means that the string will end up longer.`,
 	Args: validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsSnakeOrKebab(matcher, args[0], optSnakeSeperator, optMax, optFrmFront)
+		abbr := domain.AsSnakeOrKebab(matcher, args[0], optKebabSeperator, optMax, optFrmFront)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
@@ -45,6 +45,6 @@ if this means that the string will end up longer.`,
 }
 
 func init() {
-	rootCmd.AddCommand(snakeCmd)
-	snakeCmd.Flags().StringVar(&optSnakeSeperator, "separator", optSnakeSeperator, "Seperator between words and abbreviations when using 'snake' case (default \"_\")")
+	rootCmd.AddCommand(kebabCmd)
+	kebabCmd.Flags().StringVar(&optKebabSeperator, "separator", optKebabSeperator, "Seperator between words and abbreviations when using 'kebab' case (default \"_\")")
 }
