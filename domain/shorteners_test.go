@@ -157,7 +157,7 @@ func Test_first(t *testing.T) {
 	assert.Equal(t, false, unicode.IsTitle(first("")))
 }
 
-func TestAsSnake(t *testing.T) {
+func TestAsSeparated(t *testing.T) {
 	matcher := NewMatcherFromString(`a=aaa
 b=bbb
 c=ccc
@@ -182,6 +182,7 @@ ltd=limited`)
 		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", separator: "_", max: 0, want: "a_b_bb_c"},
 		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", separator: "_", max: 0, want: "a_b_c"},
 		{name: "Mixed camel case and non word separators with same borders", separator: "_", original: "Aaa-Bbb-Ccc", max: 0, want: "a_b_c"},
+		{name: "Snake case, full short", original: "strategy_limited", separator: "-", max: 0, want: "stg-ltd"},
 		{name: "Real example, full short", original: "strategy-limited", separator: "_", max: 0, want: "stg_ltd"},
 		{name: "Real example, shorter than total", original: "strategy-limited", separator: "_", max: 13, want: "strategy_ltd"},
 		{name: "Real example, shorter than total, start from the front", original: "strategy-limited", separator: "_", max: 13, frmFront: true, want: "stg_limited"},
@@ -202,8 +203,8 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSnakeOrKebab(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
-				t.Errorf("AsSnakeOrKebab() = %v, want %v", got, tt.want)
+			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
+				t.Errorf("AsSeparated() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -252,56 +253,6 @@ ltd=limited`)
 		t.Run(tt.name, func(t *testing.T) {
 			if got := AsPascal(matcher, tt.original, tt.max, tt.frmFront); got != tt.want {
 				t.Errorf("AsPascal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestAsKebab(t *testing.T) {
-	matcher := NewMatcherFromString(`a=aaa
-b=bbb
-c=ccc
-d=ddd
-stg=strategy
-ltd=limited`)
-	tests := []struct {
-		name      string
-		original  string
-		separator string
-		max       int
-		frmFront  bool
-		want      string
-	}{
-		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", separator: "-", max: 0, want: "a-b-c"},
-		{name: "Partial abbreviation with '-'", original: "aaa-bbb-ccc", separator: "-", max: 10, want: "aaa-bbb-c"},
-		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", separator: "-", max: 99, want: "aaa-bbb-ccc"},
-		{name: "Length is 0 with camel case", original: "AaaBbbCcc", separator: "-", max: 0, want: "a-b-c"},
-		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", separator: "-", max: 0, want: "a-b-c"},
-		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", separator: "-", max: 8, want: "aaa-b-c"},
-		{name: "Partial abbreviation with camel case, start from the front", original: "AaaBbbCcc", separator: "-", max: 8, frmFront: true, want: "a-b-ccc"},
-		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", separator: "-", max: 0, want: "a-b-bb-c"},
-		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", separator: "-", max: 0, want: "a-b-c"},
-		{name: "Mixed camel case and non word separators with same borders", separator: "-", original: "Aaa-Bbb-Ccc", max: 0, want: "a-b-c"},
-		{name: "Real example, full short", original: "strategy-limited", separator: "-", max: 0, want: "stg-ltd"},
-		{name: "Snake case, full short", original: "strategy_limited", separator: "-", max: 0, want: "stg-ltd"},
-		{name: "Real example, shorter than total", original: "strategy-limited", separator: "-", max: 13, want: "strategy-ltd"},
-		{name: "Real example, shorter than total, start from the front", original: "strategy-limited", separator: "-", max: 13, frmFront: true, want: "stg-limited"},
-		{name: "Real example, max same as shorted", original: "strategy-limited", separator: "-", max: 12, want: "strategy-ltd"},
-		{name: "Real example, max same as shorted, start from the front", original: "strategy-limited", separator: "-", max: 12, frmFront: true, want: "stg-limited"},
-		{name: "Real example, max on separator", original: "strategy-limited", separator: "-", max: 9, want: "stg-ltd"},
-		{name: "Real example, max shorter than first word", original: "strategy-limited", separator: "-", max: 6, want: "stg-ltd"},
-		{name: "Real example, no short", original: "strategy-limited", separator: "-", max: 99, want: "strategy-limited"},
-		{name: "Real example, with numbers #1", original: "strategy-limited99", separator: "-", max: 15, want: "strategy-ltd-99"},
-		{name: "Real example, with numbers #2", original: "strategy-limited-99", separator: "-", max: 15, want: "strategy-ltd-99"},
-		{name: "Real example, with numbers, start from the front #1", original: "strategy-limited99", separator: "-", max: 15, frmFront: true, want: "stg-limited-99"},
-		{name: "Real example, with numbers, start from the front #2", original: "strategy-limited-99", separator: "-", max: 15, frmFront: true, want: "stg-limited-99"},
-		{name: "Multiple separators", original: "strategy---limited--99", separator: "-", max: 15, want: "strategy-ltd-99"},
-		{name: "Multiple separators, start from the front", original: "strategy---limited--99", separator: "-", max: 15, frmFront: true, want: "stg-limited-99"},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSnakeOrKebab(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
-				t.Errorf("AsSnakeOrKebab() = %v, want %v", got, tt.want)
 			}
 		})
 	}

@@ -35,7 +35,7 @@ Where a string is not shortened, it will be converted to kebab case anyway, even
 if this means that the string will end up longer.`,
 	Args: validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsSnakeOrKebab(matcher, args[0], optKebabSeperator, optMax, optFrmFront)
+		abbr := domain.AsSeparated(matcher, args[0], optKebabSeperator, optMax, optFrmFront)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
@@ -46,5 +46,4 @@ if this means that the string will end up longer.`,
 
 func init() {
 	rootCmd.AddCommand(kebabCmd)
-	kebabCmd.Flags().StringVar(&optKebabSeperator, "separator", optKebabSeperator, "Seperator between words and abbreviations when using 'kebab' case (default \"_\")")
 }

@@ -22,20 +22,19 @@ import (
 )
 
 var (
-	optSnakeSeperator = "_"
+	optSeperator = ""
 )
+// separatedCmd represents the Separated command
+var separatedCmd = &cobra.Command{
+	Use:   "separated [string]",
+	Short: "Abbreviate a string and convert it using separator passed",
+	Long: `Abbreviate a string and convert it using separator passed.
 
-// snakeCmd represents the snake command
-var snakeCmd = &cobra.Command{
-	Use:   "snake [string]",
-	Short: "Abbreviate a string and convert it to snake case",
-	Long: `Abbreviate a string and convert it to snake case.
-
-Where a string is not shortened, it will be converted to snake case anyway, even
+Where a string is not shortened, it will be converted to your case anyway, even
 if this means that the string will end up longer.`,
 	Args: validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsSeparated(matcher, args[0], optSnakeSeperator, optMax, optFrmFront)
+		abbr := domain.AsSeparated(matcher, args[0], optSeperator, optMax, optFrmFront)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
@@ -45,5 +44,6 @@ if this means that the string will end up longer.`,
 }
 
 func init() {
-	rootCmd.AddCommand(snakeCmd)
+	rootCmd.AddCommand(separatedCmd)
+	separatedCmd.Flags().StringVarP(&optSeperator, "separator", "S", optSeperator, "Seperator between words and abbreviations when using 'separated' command (default \"\")")
 }
