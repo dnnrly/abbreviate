@@ -24,9 +24,9 @@
     [ "${lines[0]}" == "strategy_ltd" ]
 }
 
-@test "Snake case with separator" {
-    run ./abbreviate snake --max 15 --separator + strategy-limited
-    [ "${lines[0]}" == "strategy+ltd" ]
+@test "Kebab case" {
+    run ./abbreviate kebab --max 15 strategy_limited
+    [ "${lines[0]}" == "strategy-ltd" ]
 }
 
 @test "Pascal case" {
@@ -65,4 +65,14 @@
     [ "${lines[0]}" = "an=another" ]
     [ "${lines[1]}" = "short=longer" ]
     rm -f custom.txt
+}
+
+@test "Separated case" {
+    run ./abbreviate separated --max 15 --separator + strategy-limited
+    [ "${lines[0]}" == "strategy+ltd" ]
+}
+
+@test "Separated case, without separator flag" {
+    run ./abbreviate separated strategy-limited
+    [ "${lines[0]}" == "stgltd" ]
 }

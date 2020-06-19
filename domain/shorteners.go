@@ -116,11 +116,11 @@ func AsOriginal(matcher *Matcher, original string, max int, frmFront bool) strin
 	return shortened.String()
 }
 
-// AsSnake discovers words using camel case and non letter characters,
+// AsSeparated discovers words using camel case and non letter characters,
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. This inserts the specified separator
 // where a sequence is not alpha-numeric
-func AsSnake(matcher *Matcher, original, separator string, max int, frmFront bool) string {
+func AsSeparated(matcher *Matcher, original, separator string, max int, frmFront bool) string {
 	if original == "" {
 		return ""
 	}

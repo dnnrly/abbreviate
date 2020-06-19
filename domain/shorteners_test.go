@@ -157,7 +157,7 @@ func Test_first(t *testing.T) {
 	assert.Equal(t, false, unicode.IsTitle(first("")))
 }
 
-func TestAsSnake(t *testing.T) {
+func TestAsSeparated(t *testing.T) {
 	matcher := NewMatcherFromString(`a=aaa
 b=bbb
 c=ccc
@@ -182,6 +182,7 @@ ltd=limited`)
 		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", separator: "_", max: 0, want: "a_b_bb_c"},
 		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", separator: "_", max: 0, want: "a_b_c"},
 		{name: "Mixed camel case and non word separators with same borders", separator: "_", original: "Aaa-Bbb-Ccc", max: 0, want: "a_b_c"},
+		{name: "Snake case, full short", original: "strategy_limited", separator: "-", max: 0, want: "stg-ltd"},
 		{name: "Real example, full short", original: "strategy-limited", separator: "_", max: 0, want: "stg_ltd"},
 		{name: "Real example, shorter than total", original: "strategy-limited", separator: "_", max: 13, want: "strategy_ltd"},
 		{name: "Real example, shorter than total, start from the front", original: "strategy-limited", separator: "_", max: 13, frmFront: true, want: "stg_limited"},
@@ -202,8 +203,8 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSnake(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
-				t.Errorf("AsSnake() = %v, want %v", got, tt.want)
+			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
+				t.Errorf("AsSeparated() = %v, want %v", got, tt.want)
 			}
 		})
 	}

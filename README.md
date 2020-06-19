@@ -50,6 +50,8 @@ Available Commands:
   pascal      Abbreviate a string and convert it to pascal case
   print       Print abbreviations in this set
   snake       Abbreviate a string and convert it to snake case
+  kebab       Abbreviate a string and convert it to kebab case
+  separated   Abbreviate a string and convert it with separator passed between words and abbreviations
 
 Flags:
   -c, --custom string     Custom abbreviation set
@@ -77,6 +79,15 @@ stg-limited
 
 $ abbreviate camel --max 99 strategy-limited
 strategyLimited
+
+$ abbreviate kebab StrategyLimited
+stg-ltd
+
+$ abbreviate separated StrategyLimited --separator +
+stg+ltd
+
+$ abbreviate separated StrategyLimited
+stgltd
 ```
 
 ## Code of Conduct
