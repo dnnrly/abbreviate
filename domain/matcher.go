@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 )
@@ -18,13 +19,44 @@ func NewMatcher(items map[string]string) *Matcher {
 	}
 }
 
+func isVowel(r rune) bool {
+	switch r {
+	case 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U':
+		return true
+	}
+	return false
+}
+
+func guessMatchByVowel(word string) string {
+
+	result := ""
+	for _, character := range word {
+		if !isVowel(character) {
+			result += string(character)
+		}
+	}
+	return result
+}
+
 // Match against a list of mappings
-func (matcher Matcher) Match(word string) string {
+func (matcher Matcher) Match(word string, strategy string) string {
 	if abbr, found := matcher.items[word]; found {
 		return abbr
 	}
 
+	switch strategy {
+	case "":
+		return word
+	case "removeVowel":
+		guessWord := guessMatchByVowel(word)
+		return guessWord
+	default:
+		fmt.Println("Invalid strategy provided")
+		os.Exit(0)
+	}
+
 	return word
+
 }
 
 // All of the abbreviations in this set in order of the linked word

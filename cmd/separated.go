@@ -34,7 +34,7 @@ Where a string is not shortened, it will be converted to your case anyway, even
 if this means that the string will end up longer.`,
 	Args: validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsSeparated(matcher, args[0], optSeperator, optMax, optFrmFront)
+		abbr := domain.AsSeparated(matcher, args[0], optSeperator, optMax, optFrmFront,optStrategy)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {

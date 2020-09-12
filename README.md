@@ -62,6 +62,7 @@ Flags:
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
   -n, --newline           Add newline to the end of the string (default true)
   -s, --set string        Abbreviation set (default "common")
+  -r, --strategy          Set a strategy to use if no match is found for input string(allowed value "removeVowel")
 
 Use "abbreviate [command] --help" for more information about a command.
 ```
@@ -88,6 +89,10 @@ stg+ltd
 
 $ abbreviate separated StrategyLimited
 stgltd
+
+$ abbreviate original --strategy removeVowel WhatToDo
+WhtTD
+
 ```
 
 ## Code of Conduct

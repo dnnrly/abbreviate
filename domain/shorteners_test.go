@@ -21,6 +21,7 @@ ltd=limited`)
 		max      int
 		frmFront bool
 		want     string
+		strategy string
 	}{
 		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "aaa-bbb-ccc"},
 		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", max: 0, want: "a-b-c"},
@@ -49,7 +50,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsOriginal(matcher, tt.original, tt.max, tt.frmFront); got != tt.want {
+			if got := AsOriginal(matcher, tt.original, tt.max, tt.frmFront, tt.strategy); got != tt.want {
 				t.Errorf("AsOriginal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
 			}
 		})
@@ -171,6 +172,7 @@ ltd=limited`)
 		max       int
 		frmFront  bool
 		want      string
+		strategy  string
 	}{
 		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", separator: "_", max: 0, want: "a_b_c"},
 		{name: "Partial abbreviation with '_'", original: "aaa-bbb-ccc", separator: "_", max: 10, want: "aaa_bbb_c"},
@@ -203,7 +205,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
+			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront, tt.strategy); got != tt.want {
 				t.Errorf("AsSeparated() = %v, want %v", got, tt.want)
 			}
 		})
@@ -223,6 +225,7 @@ ltd=limited`)
 		max      int
 		frmFront bool
 		want     string
+		strategy string
 	}{
 		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "AaaBbbCcc"},
 		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", max: 0, want: "ABC"},
@@ -251,7 +254,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsPascal(matcher, tt.original, tt.max, tt.frmFront); got != tt.want {
+			if got := AsPascal(matcher, tt.original, tt.max, tt.frmFront, tt.strategy); got != tt.want {
 				t.Errorf("AsPascal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
 			}
 		})
