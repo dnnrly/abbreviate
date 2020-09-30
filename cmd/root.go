@@ -35,6 +35,7 @@ var (
 	optCustom   = ""
 	optMax      = 0
 	optFrmFront = false
+	optStrategy = ""
 
 	matcher *domain.Matcher
 )
@@ -120,6 +121,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
 	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
 	rootCmd.PersistentFlags().BoolVarP(&optFrmFront, "from-front", "", optFrmFront, "Shorten from the front")
+	rootCmd.PersistentFlags().StringVarP(&optStrategy, "strategy", "r", optStrategy, "Use remove vowel strategy")
 }
 
 func validateArgPresent(cmd *cobra.Command, args []string) error {

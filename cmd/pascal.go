@@ -28,7 +28,7 @@ var pascalCmd = &cobra.Command{
 	Long:  `Abbreviate a string and convert it to pascal case.`,
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsPascal(matcher, args[0], optMax, optFrmFront)
+		abbr := domain.AsPascal(matcher, args[0], optMax, optFrmFront,optStrategy)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
