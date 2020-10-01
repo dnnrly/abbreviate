@@ -35,8 +35,10 @@ var (
 	optCustom   = ""
 	optMax      = 0
 	optFrmFront = false
+	optStrategy = "lookup"
 
-	matcher *domain.Matcher
+	matcher     *domain.Matcher
+	abbreviator domain.Abbreviator
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -74,22 +76,18 @@ request. We're really interested to see more abbreviations added or corrected.`,
 			os.Exit(0)
 		}
 
-		if optCustom == "" {
-			matcher = data.Abbreviations[optLanguage][optSet]
-		} else {
-			all := ""
-			buf, err := ioutil.ReadFile(optCustom)
-			if err != nil {
-				fmt.Fprintf(
-					os.Stderr,
-					"Unable to open custom abbreviations file: %s\n",
-					err,
-				)
-				os.Exit(1)
-			}
-
-			all = string(buf)
-			matcher = domain.NewMatcherFromString(all)
+		switch optStrategy {
+		case "lookup":
+			matcher = setMatcher()
+			abbreviator = matcher
+		default:
+			fmt.Fprintf(
+				os.Stderr,
+				`Error: unknown abbreviation strategy '%s'. Only allowed %s
+	Run 'abbreviate --help' for usage.
+	`,
+				optStrategy, "lookup")
+			os.Exit(1)
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -120,6 +118,27 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&optCustom, "custom", "c", optCustom, "Custom abbreviation set")
 	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
 	rootCmd.PersistentFlags().BoolVarP(&optFrmFront, "from-front", "", optFrmFront, "Shorten from the front")
+	rootCmd.PersistentFlags().StringVarP(&optStrategy, "strategy", "", optStrategy, "Abbreviation strategy")
+}
+
+func setMatcher() *domain.Matcher {
+	if optCustom == "" {
+		return data.Abbreviations[optLanguage][optSet]
+	} else {
+		all := ""
+		buf, err := ioutil.ReadFile(optCustom)
+		if err != nil {
+			fmt.Fprintf(
+				os.Stderr,
+				"Unable to open custom abbreviations file: %s\n",
+				err,
+			)
+			os.Exit(1)
+		}
+
+		all = string(buf)
+		return domain.NewMatcherFromString(all)
+	}
 }
 
 func validateArgPresent(cmd *cobra.Command, args []string) error {

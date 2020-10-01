@@ -98,7 +98,7 @@ type Shortener func(matcher Matcher, original string, max int) string
 // AsOriginal discovers words using camel case and non letter characters,
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more.
-func AsOriginal(matcher *Matcher, original string, max int, frmFront bool) string {
+func AsOriginal(abbr Abbreviator, original string, max int, frmFront bool) string {
 	if len(original) < max {
 		return original
 	}
@@ -106,7 +106,7 @@ func AsOriginal(matcher *Matcher, original string, max int, frmFront bool) strin
 	shortened := NewSequences(original)
 	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
-		abbr := matcher.Match(strings.ToLower(str))
+		abbr := abbr.Abbreviate(strings.ToLower(str))
 		if isTitleCase(str) {
 			abbr = makeTitle(abbr)
 		}
@@ -120,7 +120,7 @@ func AsOriginal(matcher *Matcher, original string, max int, frmFront bool) strin
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. This inserts the specified separator
 // where a sequence is not alpha-numeric
-func AsSeparated(matcher *Matcher, original, separator string, max int, frmFront bool) string {
+func AsSeparated(abbr Abbreviator, original, separator string, max int, frmFront bool) string {
 	if original == "" {
 		return ""
 	}
@@ -144,7 +144,7 @@ func AsSeparated(matcher *Matcher, original, separator string, max int, frmFront
 
 	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
-		abbr := matcher.Match(str)
+		abbr := abbr.Abbreviate(str)
 		shortened[pos] = abbr
 	})
 
@@ -155,7 +155,7 @@ func AsSeparated(matcher *Matcher, original, separator string, max int, frmFront
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. Word boundaries are a capital letter at
 // the start of each word
-func AsPascal(matcher *Matcher, original string, max int, frmFront bool) string {
+func AsPascal(abbr Abbreviator, original string, max int, frmFront bool) string {
 	if original == "" {
 		return ""
 	}
@@ -179,7 +179,7 @@ func AsPascal(matcher *Matcher, original string, max int, frmFront bool) string 
 
 	shorten(shortened, max, frmFront, func(pos int) {
 		str := strings.ToLower(shortened[pos])
-		abbr := matcher.Match(str)
+		abbr := abbr.Abbreviate(str)
 		abbr = makeTitle(abbr)
 		shortened[pos] = abbr
 	})

@@ -76,3 +76,14 @@
     run ./abbreviate separated strategy-limited
     [ "${lines[0]}" == "stgltd" ]
 }
+
+@test "Errors on unknown strategy" {
+    run ./abbreviate original --strategy oops strategy-limited
+    [ "$status" -eq 1 ]
+    [ "${lines[0]}" = "Error: unknown abbreviation strategy 'oops'. Only allowed lookup" ]
+}
+
+@test "Select default strategy" {
+    run ./abbreviate original --strategy lookup strategy-limited
+    [ "${lines[0]}" == "stg-ltd" ]
+}
