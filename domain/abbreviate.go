@@ -6,6 +6,21 @@ import (
 	"strings"
 )
 
+// Abbreviator allows you to use different implementations for abbreviating words
+type Abbreviator interface {
+	// Abbreviate attempts to return an abbreviation for the word given. It
+	// does not guarantee to return a different, shorter string.
+	Abbreviate(word string) string
+}
+
+// NoAbbreviator does not abbreviate anything
+type NoAbbreviator struct{}
+
+// Abbreviate just returns the unabbreviated word
+func (a *NoAbbreviator) Abbreviate(word string) string {
+	return word
+}
+
 // Matcher finds matches between words and abbreviations
 type Matcher struct {
 	items map[string]string
@@ -16,6 +31,11 @@ func NewMatcher(items map[string]string) *Matcher {
 	return &Matcher{
 		items: items,
 	}
+}
+
+// Abbreviate returns an abbreviation looked up from pre-defined mappings
+func (matcher *Matcher) Abbreviate(word string) string {
+	return (*matcher).Match(word)
 }
 
 // Match against a list of mappings

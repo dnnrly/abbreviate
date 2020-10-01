@@ -29,7 +29,7 @@ var camelCmd = &cobra.Command{
 	Long:  `Abbreviate a string and convert it to camel case.`,
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsPascal(matcher, args[0], optMax, optFrmFront)
+		abbr := domain.AsPascal(abbreviator, args[0], optMax, optFrmFront)
 
 		ch := string(abbr[0])
 
@@ -42,14 +42,4 @@ var camelCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(camelCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// camelCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// camelCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
