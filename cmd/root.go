@@ -20,6 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -80,13 +81,15 @@ request. We're really interested to see more abbreviations added or corrected.`,
 		case "lookup":
 			matcher = setMatcher()
 			abbreviator = matcher
+		case "no-abbreviation":
+			abbreviator = &domain.NoAbbreviator{}
 		default:
 			fmt.Fprintf(
 				os.Stderr,
 				`Error: unknown abbreviation strategy '%s'. Only allowed %s
 	Run 'abbreviate --help' for usage.
 	`,
-				optStrategy, "lookup")
+				optStrategy, strings.Join([]string{"lookup", "no-abbreviation"}, ", "))
 			os.Exit(1)
 		}
 	},

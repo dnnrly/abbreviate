@@ -13,6 +13,14 @@ type Abbreviator interface {
 	Abbreviate(word string) string
 }
 
+// NoAbbreviator does not abbreviate anything
+type NoAbbreviator struct{}
+
+// Abbreviate just returns the unabbreviated word
+func (a *NoAbbreviator) Abbreviate(word string) string {
+	return word
+}
+
 // Matcher finds matches between words and abbreviations
 type Matcher struct {
 	items map[string]string
