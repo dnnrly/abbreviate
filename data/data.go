@@ -11,6 +11,6 @@ type LangageSets map[string]Sets
 // Abbreviations is the list of all abbreviations by language then set
 var Abbreviations = LangageSets{
 	"en-us": Sets{
-		"common": domain.NewMatcher(enUSCommonMainWords, enUSCommonPrefixes),
+		"common": domain.NewMatcher(enUSCommonMainWords, enUSCommonPrefixes, enUSCommonSuffixes),
 	},
 }

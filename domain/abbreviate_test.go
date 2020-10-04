@@ -22,6 +22,28 @@ func TestMatcher_Prefixes(t *testing.T) {
 	assert.Equal(t, "antprabbr", m.Match("antipreabbreviation"))
 }
 
+func TestMatcher_Suffixes(t *testing.T) {
+
+	m := Matcher{mainWords: map[string]string{"censor": "cnsr"},
+		suffixes: map[string]string{"ship": "shp"}}
+
+	assert.Equal(t, "cnsrshp", m.Match("censorship"))
+}
+
+func TestMatcher_PrefixesSuffixes(t *testing.T) {
+
+	m := Matcher{mainWords: map[string]string{"establish": "estblsh"},
+		prefixes: map[string]string{
+			"anti": "ant",
+			"dis":  "ds"},
+		suffixes: map[string]string{
+			"ment":  "mnt",
+			"arian": "arn",
+			"ism":   "sm"}}
+
+	assert.Equal(t, "antdsestblshmntarnsm", m.Match("antidisestablishmentarianism"))
+}
+
 func TestMatcher_NewMatcherFromString(t *testing.T) {
 	m := NewMatcherFromString(`abbr=abbreviation
 1=a

@@ -23,14 +23,15 @@ func (a *NoAbbreviator) Abbreviate(word string) string {
 
 // Matcher finds matches between words and abbreviations
 type Matcher struct {
-	mainWords, prefixes map[string]string
+	mainWords, prefixes, suffixes map[string]string
 }
 
 // NewMatcher creates a new matcher of abbreviation mappings
-func NewMatcher(mainWords, prefixes map[string]string) *Matcher {
+func NewMatcher(mainWords, prefixes, suffixes map[string]string) *Matcher {
 	return &Matcher{
 		mainWords: mainWords,
 		prefixes:  prefixes,
+		suffixes:  suffixes,
 	}
 }
 
@@ -48,6 +49,12 @@ func (matcher Matcher) Match(word string) string {
 			if strings.HasPrefix(word, prefix) {
 				return preAbbr + matcher.Match(strings.TrimPrefix(word, prefix))
 
+			}
+		}
+
+		for suffix, sufAbbr := range matcher.suffixes {
+			if strings.HasSuffix(word, suffix) {
+				return matcher.Match(strings.TrimSuffix(word, suffix)) + sufAbbr
 			}
 		}
 	}
