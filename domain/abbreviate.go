@@ -48,7 +48,6 @@ func (matcher Matcher) Match(word string) string {
 		for prefix, preAbbr := range matcher.prefixes {
 			if strings.HasPrefix(word, prefix) {
 				return preAbbr + matcher.Match(strings.TrimPrefix(word, prefix))
-
 			}
 		}
 
