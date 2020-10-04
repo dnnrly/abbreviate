@@ -735,7 +735,7 @@ var enUSCommon = map[string]string{
 	"identified":       "id",
 	"identify":         "id",
 	"image":            "img",
-	"images":           "img"
+	"images":           "img",
 	"inbound":          "in",
 	"implementation":   "impl",
 	"inch":             "in",
