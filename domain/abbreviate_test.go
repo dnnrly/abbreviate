@@ -7,10 +7,19 @@ import (
 )
 
 func TestMatcher_Match(t *testing.T) {
-	m := Matcher{items: map[string]string{"abbreviation": "abbr"}}
+	m := Matcher{mainWords: map[string]string{"abbreviation": "abbr"}}
 
 	assert.Equal(t, "abbr", m.Match("abbreviation"))
 	assert.Equal(t, "something", m.Match("something"))
+}
+
+func TestMatcher_Prefixes(t *testing.T) {
+
+	m := Matcher{mainWords: map[string]string{"abbreviation": "abbr"},
+		prefixes: map[string]string{"pre": "pr", "anti": "ant"}}
+
+	assert.Equal(t, "prabbr", m.Match("preabbreviation"))
+	assert.Equal(t, "antprabbr", m.Match("antipreabbreviation"))
 }
 
 func TestMatcher_NewMatcherFromString(t *testing.T) {

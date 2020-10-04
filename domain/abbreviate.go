@@ -23,13 +23,14 @@ func (a *NoAbbreviator) Abbreviate(word string) string {
 
 // Matcher finds matches between words and abbreviations
 type Matcher struct {
-	items map[string]string
+	mainWords, prefixes map[string]string
 }
 
 // NewMatcher creates a new matcher of abbreviation mappings
-func NewMatcher(items map[string]string) *Matcher {
+func NewMatcher(mainWords, prefixes map[string]string) *Matcher {
 	return &Matcher{
-		items: items,
+		mainWords: mainWords,
+		prefixes:  prefixes,
 	}
 }
 
@@ -40,8 +41,15 @@ func (matcher *Matcher) Abbreviate(word string) string {
 
 // Match against a list of mappings
 func (matcher Matcher) Match(word string) string {
-	if abbr, found := matcher.items[word]; found {
+	if abbr, found := matcher.mainWords[word]; found {
 		return abbr
+	} else {
+		for prefix, preAbbr := range matcher.prefixes {
+			if strings.HasPrefix(word, prefix) {
+				return preAbbr + matcher.Match(strings.TrimPrefix(word, prefix))
+
+			}
+		}
 	}
 
 	return word
@@ -51,7 +59,7 @@ func (matcher Matcher) Match(word string) string {
 func (matcher Matcher) All() []string {
 	all := []string{}
 
-	for k, v := range matcher.items {
+	for k, v := range matcher.mainWords {
 		all = append(all, fmt.Sprintf("%s=%s", v, k))
 	}
 
@@ -75,5 +83,5 @@ func NewMatcherFromString(data string) *Matcher {
 		}
 	}
 
-	return &Matcher{items: items}
+	return &Matcher{mainWords: items}
 }
