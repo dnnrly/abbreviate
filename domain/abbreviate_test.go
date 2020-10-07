@@ -13,8 +13,7 @@ func TestMatcher_Match(t *testing.T) {
 	assert.Equal(t, "something", m.Match("something"))
 }
 
-func TestMatcher_Prefixes(t *testing.T) {
-
+func TestMatcher_Match_prefixess(t *testing.T) {
 	m := Matcher{mainWords: map[string]string{"abbreviation": "abbr"},
 		prefixes: map[string]string{"pre": "pr", "anti": "ant"}}
 
@@ -22,16 +21,14 @@ func TestMatcher_Prefixes(t *testing.T) {
 	assert.Equal(t, "antprabbr", m.Match("antipreabbreviation"))
 }
 
-func TestMatcher_Suffixes(t *testing.T) {
-
+func TestMatcher_Match_suffixes(t *testing.T) {
 	m := Matcher{mainWords: map[string]string{"censor": "cnsr"},
 		suffixes: map[string]string{"ship": "shp"}}
 
 	assert.Equal(t, "cnsrshp", m.Match("censorship"))
 }
 
-func TestMatcher_PrefixesSuffixes(t *testing.T) {
-
+func TestMatcher_Match_multiple_prefixes_suffixes(t *testing.T) {
 	m := Matcher{mainWords: map[string]string{"establish": "estblsh"},
 		prefixes: map[string]string{
 			"anti": "ant",
@@ -42,6 +39,28 @@ func TestMatcher_PrefixesSuffixes(t *testing.T) {
 			"ism":   "sm"}}
 
 	assert.Equal(t, "antdsestblshmntarnsm", m.Match("antidisestablishmentarianism"))
+}
+
+func TestMatcher_Match_partial_match_prefixes_suffixes(t *testing.T) {
+	m := Matcher{
+		mainWords: map[string]string{"establish": "estblsh"},
+		prefixes: map[string]string{
+			"anti": "ant",
+		},
+		suffixes: map[string]string{
+			"ment":  "mnt",
+			"arian": "arn",
+		},
+	}
+
+	// Prefix and suffix checking stops recursing as soon as there is no match.
+	// Here, 'ment' and 'arian' are never abbreviated because 'ism' is not matched.
+	assert.Equal(t, "antdisestablishmentarianism", m.Match("antidisestablishmentarianism"))
+}
+
+func TestMatcher_no_prefix_suffix_returns_original_word(t *testing.T) {
+	m := Matcher{mainWords: map[string]string{"establish": "estblsh"}}
+	assert.Equal(t, "establishment", m.Match("establishment"))
 }
 
 func TestMatcher_NewMatcherFromString(t *testing.T) {
