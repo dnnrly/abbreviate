@@ -92,3 +92,18 @@
     run ./abbreviate original --strategy no-abbreviation strategy-limited
     [ "${lines[0]}" == "strategy-limited" ]
 }
+
+@test "Lookup includes prefixes" {
+    run ./abbreviate original --strategy lookup prestrategy-limited
+    [ "${lines[0]}" == "prstg-ltd" ]
+}
+
+@test "Lookup includes suffixes" {
+    run ./abbreviate original --strategy lookup strategy-limitedment
+    [ "${lines[0]}" == "stg-ltdmnt" ]
+}
+
+@test "Lookup includes prefixes and suffixes" {
+    run ./abbreviate original --strategy lookup prestrategy-limitedment
+    [ "${lines[0]}" == "prstg-ltdmnt" ]
+}

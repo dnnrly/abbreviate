@@ -33,8 +33,8 @@ make build
 
 ```
 This tool will attempt to shorten the string provided using common abbreviations
-specified by language and 'set'. Word boundaries will be detected using title case
-and non-letters.
+specified by language and 'set'. Common prefixes and suffixes are also abbreviated.
+Word boundaries will be detected using title case and non-letters.
 
 Hosted on Github - https://github.com/dnnrly/abbreviate
 
@@ -72,6 +72,9 @@ Examples:
 ```
 $ abbreviate original strategy-limited
 stg-ltd
+
+$ abbreviate original prestrategy-limitedment
+prstg-ltdmnt
 
 $ abbreviate original --max 11 strategy-limited
 strategy-ltd
