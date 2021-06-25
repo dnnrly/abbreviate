@@ -9,7 +9,7 @@ TMP_DIR=?/tmp
 
 BASE_DIR=$(shell pwd)
 
-export PATH := ./bin:$(PATH)
+export PATH := $(BASE_DIR)/bin:$(PATH)
 
 install: deps
 
@@ -18,24 +18,15 @@ build:
 
 clean:
 	rm -f abbreviate
-	rm -rf dist
 
 clean-deps:
 	rm -rf ./bin
 	rm -rf ./tmp
-	rm -rf ./libexec
 	rm -rf ./share
 
-./bin/bats:
-	git clone https://github.com/sstephenson/bats.git ./tmp/bats
-	./tmp/bats/install.sh .
-
-test-deps: ./bin/bats
+test-deps: ./bin/godog
 	$(CURL_BIN) -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b ./bin v1.21.0
-	$(GO_BIN) get ./...
-ifeq ($(GO111MODULE),on)
-	$(GO_BIN) mod tidy
-endif
+	$(GO_BIN) get -t ./...
 
 ./bin:
 	mkdir ./bin
@@ -48,6 +39,11 @@ endif
 	gunzip -f ./tmp/goreleaser.tar.gz
 	tar -C ./bin -xvf ./tmp/goreleaser.tar
 
+./bin/godog: ./bin ./tmp
+	curl --fail -L -o ./tmp/godog.tar.gz https://github.com/cucumber/godog/releases/download/v0.11.0/godog-v0.11.0-linux-amd64.tar.gz
+	tar -xf ./tmp/godog.tar.gz -C ./tmp
+	cp ./tmp/godog-v0.11.0-linux-amd64/godog ./bin
+
 build-deps: ./bin/goreleaser
 
 deps: build-deps test-deps
@@ -56,7 +52,7 @@ test:
 	$(GO_BIN) test $(GO_MOD_PARAM) ./...
 
 acceptance-test:
-	bats --tap acceptance.bats
+	cd test && godog -t @Acceptance
 
 ci-test:
 	$(GO_BIN) test $(GO_MOD_PARAM) -race -coverprofile=coverage.txt -covermode=atomic ./...
