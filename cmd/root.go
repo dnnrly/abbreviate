@@ -52,6 +52,10 @@ and non-letters.
 
 Hosted on Github - https://github.com/dnnrly/abbreviate
 
+I'm really interested in how you feel about this tool. Please take the time to fill
+in this short survey:
+https://forms.gle/6xV1gB8yKGdmuHJ78
+
 If you spot a bug, feel free to raise an issue or fix it and make a pull
 request. We're really interested to see more abbreviations added or corrected.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
