@@ -22,6 +22,11 @@ case, AWS stack names) being too long. Wouldn't it be nice if we could have a
 tool that would be able to suggest shorter alternatives if your original name
 is too long.
 
+Before we get any further, I'm really interested in how you feel about this
+tool. Please take the time to fill in this short survey:
+https://forms.gle/6xV1gB8yKGdmuHJ78
+
+
 ## Installation
 
 ```bash
