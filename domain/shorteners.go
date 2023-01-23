@@ -1,8 +1,11 @@
 package domain
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/dnnrly/abbreviate/data/stopwords"
 )
 
 type parseState int
@@ -58,7 +61,28 @@ func NewSequences(original string) Sequences {
 		seq.AddBack(set)
 	}
 
+	seq.RemoveStopwords()
+
 	return seq
+}
+
+// RemoveStopwords removes stopwords in the Sequences
+func (all *Sequences) RemoveStopwords() {
+	stopRmvdSeq := Sequences{}
+	for _, word := range *all {
+		firstChar := rune(word[0])
+		_, isStopword := stopwords.StopwordsEn[strings.ToLower(word)]
+		newLen := len(stopRmvdSeq)
+		if unicode.IsUpper(firstChar) || isStopword {
+			if newLen > 0 && stopRmvdSeq.IsSeparater(newLen-1) {
+				stopRmvdSeq.Pop()
+			}
+		}
+		if !isStopword && (len(stopRmvdSeq) != 0 || !isSeparater(word)) {
+			stopRmvdSeq.AddBack(word)
+		}
+	}
+	*all = stopRmvdSeq
 }
 
 func (all Sequences) String() string {
@@ -89,6 +113,25 @@ func (all Sequences) Len() int {
 	}
 
 	return l
+}
+
+// Pop deletes the last string in the Sequences
+func (all *Sequences) Pop() {
+	n := len(*all)
+	if n > 0 {
+		*all = (*all)[:n-1]
+	}
+}
+
+// IsSeparater checks if the string at position pos is a separater
+func (all *Sequences) IsSeparater(pos int) bool {
+	return isSeparater((*all)[pos])
+}
+
+// isSeparater checks if a string is a separater (i.e. doesn't include letters and digits)
+func isSeparater(str string) bool {
+	reg := regexp.MustCompile(`[\pL\p{Mc}\p{Mn}\d']+`)
+	return len(reg.FindAll([]byte(str), -1)) == 0
 }
 
 // Shortener represents an algorithm that can be used to shorten a string
