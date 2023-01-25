@@ -27,7 +27,7 @@ var originalCmd = &cobra.Command{
 	Short: "Abbreviate the string using the original word boundary separators",
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsOriginal(abbreviator, args[0], optMax, optFrmFront)
+		abbr := domain.AsOriginal(abbreviator, args[0], optMax, optFrmFront, optRemoveStopwords)
 
 		fmt.Printf("%s", abbr)
 		if optNewline {
