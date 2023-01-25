@@ -20,6 +20,7 @@ ltd=limited`)
 		original string
 		max      int
 		frmFront bool
+		rmvStop  bool
 		want     string
 	}{
 		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "aaa-bbb-ccc"},
@@ -49,7 +50,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsOriginal(matcher, tt.original, tt.max, tt.frmFront); got != tt.want {
+			if got := AsOriginal(matcher, tt.original, tt.max, tt.frmFront, tt.rmvStop); got != tt.want {
 				t.Errorf("AsOriginal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
 			}
 		})
@@ -170,6 +171,7 @@ ltd=limited`)
 		separator string
 		max       int
 		frmFront  bool
+		rmvStop   bool
 		want      string
 	}{
 		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", separator: "_", max: 0, want: "a_b_c"},
@@ -203,7 +205,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront); got != tt.want {
+			if got := AsSeparated(matcher, tt.original, tt.separator, tt.max, tt.frmFront, tt.rmvStop); got != tt.want {
 				t.Errorf("AsSeparated() = %v, want %v", got, tt.want)
 			}
 		})
@@ -222,6 +224,7 @@ ltd=limited`)
 		original string
 		max      int
 		frmFront bool
+		rmvStop  bool
 		want     string
 	}{
 		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "AaaBbbCcc"},
@@ -251,7 +254,7 @@ ltd=limited`)
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := AsPascal(matcher, tt.original, tt.max, tt.frmFront); got != tt.want {
+			if got := AsPascal(matcher, tt.original, tt.max, tt.frmFront, tt.rmvStop); got != tt.want {
 				t.Errorf("AsPascal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
 			}
 		})
