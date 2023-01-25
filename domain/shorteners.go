@@ -61,19 +61,17 @@ func NewSequences(original string) Sequences {
 		seq.AddBack(set)
 	}
 
-	seq.RemoveStopwords()
-
 	return seq
 }
 
 // RemoveStopwords removes stopwords in the Sequences
-func (all *Sequences) RemoveStopwords() {
+func (all *Sequences) RemoveStopwords(original bool) {
 	stopRmvdSeq := Sequences{}
 	for _, word := range *all {
 		firstChar := rune(word[0])
 		_, isStopword := stopwords.StopwordsEn[strings.ToLower(word)]
 		newLen := len(stopRmvdSeq)
-		if unicode.IsUpper(firstChar) || isStopword {
+		if (!original && unicode.IsUpper(firstChar)) || isStopword {
 			if newLen > 0 && stopRmvdSeq.IsSeparater(newLen-1) {
 				stopRmvdSeq.Pop()
 			}
