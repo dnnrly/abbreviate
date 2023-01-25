@@ -38,10 +38,14 @@ make build
 
 ```
 This tool will attempt to shorten the string provided using common abbreviations
-specified by language and 'set'. Common prefixes and suffixes are also abbreviated.
-Word boundaries will be detected using title case and non-letters.
+specified by language and 'set'. Word boundaries will be detected using title case
+and non-letters.
 
 Hosted on Github - https://github.com/dnnrly/abbreviate
+
+I'm really interested in how you feel about this tool. Please take the time to fill
+in this short survey:
+https://forms.gle/6xV1gB8yKGdmuHJ78
 
 If you spot a bug, feel free to raise an issue or fix it and make a pull
 request. We're really interested to see more abbreviations added or corrected.
@@ -53,12 +57,12 @@ Usage:
 Available Commands:
   camel       Abbreviate a string and convert it to camel case
   help        Help about any command
+  kebab       Abbreviate a string and convert it to kebab case
   original    Abbreviate the string using the original word boundary separators
   pascal      Abbreviate a string and convert it to pascal case
   print       Print abbreviations in this set
+  separated   Abbreviate a string and convert it using separator passed
   snake       Abbreviate a string and convert it to snake case
-  kebab       Abbreviate a string and convert it to kebab case
-  separated   Abbreviate a string and convert it with separator passed between words and abbreviations
 
 Flags:
   -c, --custom string     Custom abbreviation set
@@ -69,6 +73,8 @@ Flags:
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
   -n, --newline           Add newline to the end of the string (default true)
   -s, --set string        Abbreviation set (default "common")
+      --stopword          Remove stopwords from abbreviation
+      --strategy string   Abbreviation strategy (default "lookup")
 
 Use "abbreviate [command] --help" for more information about a command.
 ```

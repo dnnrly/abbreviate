@@ -64,17 +64,18 @@ func NewSequences(original string) Sequences {
 	return seq
 }
 
-// RemoveStopwords removes stopwords in the Sequences
+// RemoveStopwords removes stopwords in the Sequences,
+// and separators that precedes a stopword
 func (all *Sequences) RemoveStopwords() {
 	stopRmvdSeq := Sequences{}
 	for _, word := range *all {
 		_, isStopword := stopwords.StopwordsEn[strings.ToLower(word)]
 		newLen := len(stopRmvdSeq)
 		if isStopword {
-			if newLen > 0 && stopRmvdSeq.IsSeparater(newLen-1) {
+			if newLen > 0 && stopRmvdSeq.IsSeparator(newLen-1) {
 				stopRmvdSeq.Pop()
 			}
-		} else if len(stopRmvdSeq) != 0 || !isSeparater(word) {
+		} else if len(stopRmvdSeq) != 0 || !isSeparator(word) {
 			stopRmvdSeq.AddBack(word)
 		}
 	}
@@ -119,13 +120,13 @@ func (all *Sequences) Pop() {
 	}
 }
 
-// IsSeparater checks if the string at position pos is a separater
-func (all *Sequences) IsSeparater(pos int) bool {
-	return isSeparater((*all)[pos])
+// IsSeparator checks if the string at position pos is a separator
+func (all *Sequences) IsSeparator(pos int) bool {
+	return isSeparator((*all)[pos])
 }
 
-// isSeparater checks if a string is a separater (i.e. doesn't include letters and digits)
-func isSeparater(str string) bool {
+// isSeparator checks if a string is a separator (i.e. doesn't include letters and digits)
+func isSeparator(str string) bool {
 	reg := regexp.MustCompile(`[\pL\p{Mc}\p{Mn}\d']+`)
 	return len(reg.FindAll([]byte(str), -1)) == 0
 }
