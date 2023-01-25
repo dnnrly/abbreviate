@@ -65,18 +65,16 @@ func NewSequences(original string) Sequences {
 }
 
 // RemoveStopwords removes stopwords in the Sequences
-func (all *Sequences) RemoveStopwords(original bool) {
+func (all *Sequences) RemoveStopwords() {
 	stopRmvdSeq := Sequences{}
 	for _, word := range *all {
-		firstChar := rune(word[0])
 		_, isStopword := stopwords.StopwordsEn[strings.ToLower(word)]
 		newLen := len(stopRmvdSeq)
-		if (!original && unicode.IsUpper(firstChar)) || isStopword {
+		if isStopword {
 			if newLen > 0 && stopRmvdSeq.IsSeparater(newLen-1) {
 				stopRmvdSeq.Pop()
 			}
-		}
-		if !isStopword && (len(stopRmvdSeq) != 0 || !isSeparater(word)) {
+		} else if len(stopRmvdSeq) != 0 || !isSeparater(word) {
 			stopRmvdSeq.AddBack(word)
 		}
 	}
@@ -146,7 +144,7 @@ func AsOriginal(abbr Abbreviator, original string, max int, frmFront bool, rmvSt
 
 	shortened := NewSequences(original)
 	if rmvStop {
-		shortened.RemoveStopwords(true)
+		shortened.RemoveStopwords()
 	}
 	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
@@ -171,7 +169,7 @@ func AsSeparated(abbr Abbreviator, original, separator string, max int, frmFront
 
 	parts := NewSequences(original)
 	if rmvStop {
-		parts.RemoveStopwords(false)
+		parts.RemoveStopwords()
 	}
 	shortened := Sequences{}
 
@@ -209,7 +207,7 @@ func AsPascal(abbr Abbreviator, original string, max int, frmFront bool, rmvStop
 
 	parts := NewSequences(original)
 	if rmvStop {
-		parts.RemoveStopwords(false)
+		parts.RemoveStopwords()
 	}
 	shortened := Sequences{}
 
