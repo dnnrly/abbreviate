@@ -141,6 +141,39 @@ func TestNewSequences(t *testing.T) {
 	}
 }
 
+func Test_SequenceRemoveStopwords(t *testing.T) {
+	tests := []struct {
+		name string
+		orig Sequences
+		want Sequences
+	}{
+		{name: "1", orig: Sequences{"cat"}, want: Sequences{"cat"}},
+		{name: "2", orig: Sequences{"the", "-", "cat"}, want: Sequences{"cat"}},
+		{name: "3", orig: Sequences{"cat", "-", "the"}, want: Sequences{"cat"}},
+		{name: "6", orig: Sequences{"cat", "-", "the", "+", "cat"}, want: Sequences{"cat", "+", "cat"}},
+		{name: "4", orig: Sequences{"cat", "-", "Cat"}, want: Sequences{"cat", "-", "Cat"}},
+		{name: "5", orig: Sequences{"cat", "Cat"}, want: Sequences{"cat", "Cat"}},
+		{name: "", orig: Sequences{"the", "Cat"}, want: Sequences{"Cat"}},
+		{name: "", orig: Sequences{"cat", "The"}, want: Sequences{"cat"}},
+		{name: "", orig: Sequences{"cat", "The", "-", "cat"}, want: Sequences{"cat", "-", "cat"}},
+		{name: "", orig: Sequences{"cat", "The", "-", "the"}, want: Sequences{"cat"}},
+		{name: "", orig: Sequences{"the", "The", "-", "cat"}, want: Sequences{"cat"}},
+		{name: "", orig: Sequences{"the"}, want: Sequences{}},
+		{name: "", orig: Sequences{"the", "-", "the"}, want: Sequences{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.orig.RemoveStopwords()
+			if !reflect.DeepEqual(tt.orig, tt.want) {
+				t.Errorf("RemoveStopwords() = %v (%d), want %v (%d)",
+					[]string(tt.orig), len(tt.orig),
+					[]string(tt.want), len(tt.want),
+				)
+			}
+		})
+	}
+}
+
 func Test_isTitleCase(t *testing.T) {
 	assert.Equal(t, true, isTitleCase("Abc"))
 	assert.Equal(t, true, isTitleCase("A"))
