@@ -73,7 +73,7 @@ Flags:
   -m, --max int           Maximum length of string, keep on abbreviating while the string is longer than this limit
   -n, --newline           Add newline to the end of the string (default true)
   -s, --set string        Abbreviation set (default "common")
-      --stopword          Remove stopwords from abbreviation
+      --no-stopwords      Remove stopwords from abbreviation
       --strategy string   Abbreviation strategy (default "lookup")
 
 Use "abbreviate [command] --help" for more information about a command.
