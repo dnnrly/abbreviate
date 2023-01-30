@@ -1,8 +1,11 @@
 package domain
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/dnnrly/abbreviate/data/stopwords"
 )
 
 type parseState int
@@ -61,6 +64,24 @@ func NewSequences(original string) Sequences {
 	return seq
 }
 
+// RemoveStopwords removes stopwords in the Sequences,
+// and separators that precedes a stopword
+func (all *Sequences) RemoveStopwords() {
+	stopRmvdSeq := Sequences{}
+	for _, word := range *all {
+		_, isStopword := stopwords.StopwordsEn[strings.ToLower(word)]
+		newLen := len(stopRmvdSeq)
+		if isStopword {
+			if newLen > 0 && stopRmvdSeq.IsSeparator(newLen-1) {
+				stopRmvdSeq.Pop()
+			}
+		} else if len(stopRmvdSeq) != 0 || !isSeparator(word) {
+			stopRmvdSeq.AddBack(word)
+		}
+	}
+	*all = stopRmvdSeq
+}
+
 func (all Sequences) String() string {
 	str := ""
 	for _, s := range all {
@@ -91,6 +112,25 @@ func (all Sequences) Len() int {
 	return l
 }
 
+// Pop deletes the last string in the Sequences
+func (all *Sequences) Pop() {
+	n := len(*all)
+	if n > 0 {
+		*all = (*all)[:n-1]
+	}
+}
+
+// IsSeparator checks if the string at position pos is a separator
+func (all *Sequences) IsSeparator(pos int) bool {
+	return isSeparator((*all)[pos])
+}
+
+// isSeparator checks if a string is a separator (i.e. doesn't include letters and digits)
+func isSeparator(str string) bool {
+	reg := regexp.MustCompile(`[\pL\p{Mc}\p{Mn}\d']+`)
+	return len(reg.FindAll([]byte(str), -1)) == 0
+}
+
 // Shortener represents an algorithm that can be used to shorten a string
 // by substituting words for abbreviations
 type Shortener func(matcher Matcher, original string, max int) string
@@ -98,12 +138,15 @@ type Shortener func(matcher Matcher, original string, max int) string
 // AsOriginal discovers words using camel case and non letter characters,
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more.
-func AsOriginal(abbr Abbreviator, original string, max int, frmFront bool) string {
+func AsOriginal(abbr Abbreviator, original string, max int, frmFront bool, rmvStop bool) string {
 	if len(original) < max {
 		return original
 	}
 
 	shortened := NewSequences(original)
+	if rmvStop {
+		shortened.RemoveStopwords()
+	}
 	shorten(shortened, max, frmFront, func(pos int) {
 		str := shortened[pos]
 		abbr := abbr.Abbreviate(strings.ToLower(str))
@@ -120,12 +163,15 @@ func AsOriginal(abbr Abbreviator, original string, max int, frmFront bool) strin
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. This inserts the specified separator
 // where a sequence is not alpha-numeric
-func AsSeparated(abbr Abbreviator, original, separator string, max int, frmFront bool) string {
+func AsSeparated(abbr Abbreviator, original, separator string, max int, frmFront bool, rmvStop bool) string {
 	if original == "" {
 		return ""
 	}
 
 	parts := NewSequences(original)
+	if rmvStop {
+		parts.RemoveStopwords()
+	}
 	shortened := Sequences{}
 
 	for i, str := range parts {
@@ -155,12 +201,15 @@ func AsSeparated(abbr Abbreviator, original, separator string, max int, frmFront
 // starting from the back or the front until the string has less than 'max' characters
 // or it can't shorten any more. Word boundaries are a capital letter at
 // the start of each word
-func AsPascal(abbr Abbreviator, original string, max int, frmFront bool) string {
+func AsPascal(abbr Abbreviator, original string, max int, frmFront bool, rmvStop bool) string {
 	if original == "" {
 		return ""
 	}
 
 	parts := NewSequences(original)
+	if rmvStop {
+		parts.RemoveStopwords()
+	}
 	shortened := Sequences{}
 
 	for _, str := range parts {

@@ -29,11 +29,13 @@ var camelCmd = &cobra.Command{
 	Long:  `Abbreviate a string and convert it to camel case.`,
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsPascal(abbreviator, args[0], optMax, optFrmFront)
+		abbr := domain.AsPascal(abbreviator, args[0], optMax, optFrmFront, optRemoveStopwords)
 
-		ch := string(abbr[0])
+		if len(abbr) > 0 {
+			ch := string(abbr[0])
 
-		fmt.Printf("%s%s", strings.ToLower(ch), abbr[1:])
+			fmt.Printf("%s%s", strings.ToLower(ch), abbr[1:])
+		}
 		if optNewline {
 			fmt.Printf("\n")
 		}

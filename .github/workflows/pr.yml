@@ -1,5 +1,10 @@
 name: Validate for PR
-on: push
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
   validate:
     name: Validate abbreviate

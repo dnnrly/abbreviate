@@ -29,14 +29,15 @@ import (
 )
 
 var (
-	optList     = false
-	optNewline  = true
-	optLanguage = "en-us"
-	optSet      = "common"
-	optCustom   = ""
-	optMax      = 0
-	optFrmFront = false
-	optStrategy = "lookup"
+	optList            = false
+	optNewline         = true
+	optLanguage        = "en-us"
+	optSet             = "common"
+	optCustom          = ""
+	optMax             = 0
+	optFrmFront        = false
+	optStrategy        = "lookup"
+	optRemoveStopwords = false
 
 	matcher     *domain.Matcher
 	abbreviator domain.Abbreviator
@@ -126,6 +127,7 @@ func init() {
 	rootCmd.PersistentFlags().IntVarP(&optMax, "max", "m", optMax, "Maximum length of string, keep on abbreviating while the string is longer than this limit")
 	rootCmd.PersistentFlags().BoolVarP(&optFrmFront, "from-front", "", optFrmFront, "Shorten from the front")
 	rootCmd.PersistentFlags().StringVarP(&optStrategy, "strategy", "", optStrategy, "Abbreviation strategy")
+	rootCmd.PersistentFlags().BoolVarP(&optRemoveStopwords, "no-stopwords", "", optRemoveStopwords, "Remove stopwords from abbreviation")
 }
 
 func setMatcher() *domain.Matcher {
