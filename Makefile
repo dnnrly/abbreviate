@@ -11,14 +11,18 @@ BASE_DIR=$(shell pwd)
 
 export PATH := $(BASE_DIR)/bin:$(PATH)
 
+.PHONY: install
 install: deps
 
+.PHONY: build
 build:
 	$(GO_BIN) build $(GO_MOD_PARAM)
 
+.PHONY: clean
 clean:
 	rm -f abbreviate
 
+.PHONY: clean-deps
 clean-deps:
 	rm -rf ./bin
 	rm -rf ./tmp
@@ -48,21 +52,27 @@ build-deps: ./bin/goreleaser
 
 deps: build-deps test-deps
 
+.PHONY: test
 test:
 	$(GO_BIN) test $(GO_MOD_PARAM) ./...
 
+.PHONY: acceptance-test
 acceptance-test:
 	cd test && godog -t @Acceptance
 
+.PHONY: ci-test
 ci-test:
 	$(GO_BIN) test $(GO_MOD_PARAM) -race -coverprofile=coverage.txt -covermode=atomic ./...
 
+.PHONY: lint
 lint:
 	$(LINT_BIN) run
 
+.PHONY: release
 release: clean
 	$(GORELEASER_BIN) $(PUBLISH_PARAM)
 
+.PHONY: update
 update:
 	$(GO_BIN) get -u
 ifeq ($(GO111MODULE),on)
@@ -73,3 +83,4 @@ endif
 ifeq ($(GO111MODULE),on)
 	$(GO_BIN) mod tidy
 endif
+
