@@ -41,6 +41,12 @@ Feature: Simple CLI commands
         When the app runs with parameters "kebab --max 15 strategy_limited"
         Then the app exits without error
         And the app output contains exactly "strategy-ltd"
+    
+    @Acceptance
+    Scenario: Title case
+        When the app runs with parameters "title --max 15 strategy_limited"
+        Then the app exits without error
+        And the app output contains exactly "Strategy Ltd"
 
     @Acceptance
     Scenario: Pascal case
