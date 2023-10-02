@@ -8,14 +8,6 @@ import (
 	"github.com/dnnrly/abbreviate/data/stopwords"
 )
 
-type parseState int
-
-const (
-	starting parseState = iota
-	inWord
-	betweenWords
-)
-
 // Sequences represents a string that has been broken in to different parts of
 // words and separators
 type Sequences []string
@@ -30,7 +22,7 @@ func NewSequences(original string) Sequences {
 
 	set := string(original[0])
 	original = original[1:]
-	for _, ch := range []rune(original) {
+	for _, ch := range original {
 		_, last := lastChar(set)
 		if unicode.IsUpper(ch) {
 			if set != "" {

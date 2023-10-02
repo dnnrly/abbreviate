@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-go@v1
         with:
-          go-version: '1.16'
+          go-version: '1.21'
       - run: make ci-test deps build acceptance-test
         env:
           GO111MODULE: on
