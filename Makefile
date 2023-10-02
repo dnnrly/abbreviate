@@ -39,8 +39,10 @@ clean-deps: ## remove dependencies
 	rm -rf ./share
 
 .PHONY: test-deps
-test-deps: ./bin/godog ## set up test dependencies
-	$(CURL_BIN) -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b ./bin v1.21.0
+test-deps: ## set up test dependencies
+	# binary will be $(go env GOPATH)/bin/golangci-lint
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.54.2
+	golangci-lint --version
 	$(GO_BIN) get -t ./...
 
 ./bin:
@@ -49,13 +51,10 @@ test-deps: ./bin/godog ## set up test dependencies
 ./tmp:
 	mkdir ./tmp
 
-./bin/goreleaser: ./bin ./tmp
-	$(CURL_BIN) --fail -L -o ./tmp/goreleaser.tar.gz https://github.com/goreleaser/goreleaser/releases/download/v0.117.2/goreleaser_Linux_x86_64.tar.gz
-	gunzip -f ./tmp/goreleaser.tar.gz
-	tar -C ./bin -xvf ./tmp/goreleaser.tar
-
 .PHONY: build-deps
-build-deps: ./bin/goreleaser ## set up build depenencies
+build-deps: ## set up build depenencies
+	go install github.com/goreleaser/goreleaser@v1.21.2
+
 
 deps: build-deps test-deps
 

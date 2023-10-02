@@ -17,7 +17,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
@@ -135,7 +134,7 @@ func setMatcher() *domain.Matcher {
 		return data.Abbreviations[optLanguage][optSet]
 	} else {
 		all := ""
-		buf, err := ioutil.ReadFile(optCustom)
+		buf, err := os.ReadFile(optCustom)
 		if err != nil {
 			fmt.Fprintf(
 				os.Stderr,
