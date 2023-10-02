@@ -54,11 +54,6 @@ test-deps: ./bin/godog ## set up test dependencies
 	gunzip -f ./tmp/goreleaser.tar.gz
 	tar -C ./bin -xvf ./tmp/goreleaser.tar
 
-./bin/godog: ./bin ./tmp
-	curl --fail -L -o ./tmp/godog.tar.gz https://github.com/cucumber/godog/releases/download/v0.11.0/godog-v0.11.0-linux-amd64.tar.gz
-	tar -xf ./tmp/godog.tar.gz -C ./tmp
-	cp ./tmp/godog-v0.11.0-linux-amd64/godog ./bin
-
 .PHONY: build-deps
 build-deps: ./bin/goreleaser ## set up build depenencies
 
@@ -70,7 +65,7 @@ test: ## run unit tests
 
 .PHONY: acceptance-test
 acceptance-test: ## run acceptance tests
-	cd test && godog -t @Acceptance
+	cd test && go test -tags acceptance
 
 .PHONY: ci-test
 ci-test: ## run unit tests for CI
