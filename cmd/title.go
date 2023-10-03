@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"github.com/dnnrly/abbreviate/domain"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 // titleCmd represents the title command
