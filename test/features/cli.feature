@@ -46,7 +46,7 @@ Feature: Simple CLI commands
     Scenario: Title case
         When the app runs with parameters "title --max 14 strategy_limited"
         Then the app exits without error
-        And the app output contains exactly "Strategy Limited"
+        And the app output contains exactly "Strategy Ltd"
 
     @Acceptance
     Scenario: Pascal case
