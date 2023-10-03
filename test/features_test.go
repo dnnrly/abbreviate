@@ -57,6 +57,7 @@ func (c *testContext) theAppOutputContains(expected string) error {
 func (c *testContext) theAppOutputContainsExactly(expected string) error {
 	expected = strings.ReplaceAll(expected, "\\\"", "\"")
 	assert.Equal(c, strings.TrimSuffix(c.cmdResult.Output, "\n"), expected)
+	assert.Equal(c, expected, strings.TrimSuffix(c.cmdResult.Output, "\n"))
 	return c.err
 }
 
