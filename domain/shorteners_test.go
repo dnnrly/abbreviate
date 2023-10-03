@@ -293,3 +293,52 @@ ltd=limited`)
 		})
 	}
 }
+
+func TestToTitle(t *testing.T) {
+	matcher := NewMatcherFromString(`a=aaa
+b=bbb
+c=ccc
+d=ddd
+stg=strategy
+ltd=limited`)
+	tests := []struct {
+		name     string
+		original string
+		max      int
+		frmFront bool
+		rmvStop  bool
+		want     string
+	}{
+		{name: "Length longer than origin with '-'", original: "aaa-bbb-ccc", max: 99, want: "Aaa Bbb Ccc"},
+		{name: "Length is 0 with '-'", original: "aaa-bbb-ccc", max: 0, want: "A B C"},
+		{name: "Partial abbreviation with '-'", original: "aaa-bbb-ccc", max: 8, want: "Aaa Bbb C"},
+		{name: "Partial abbreviation with '-', start from the front", original: "aaa-bbb-ccc", max: 8, frmFront: true, want: "A Bbb Ccc"},
+		{name: "Length longer than origin with camel case", original: "AaaBbbCcc", max: 99, want: "Aaa Bbb Ccc"},
+		{name: "Length is 0 with camel case", original: "AaaBbbCcc", max: 0, want: "A B C"},
+		{name: "Length is 0 with camel case, matching case", original: "aaaBbbCcc", max: 0, want: "A B C"},
+		{name: "Partial abbreviation with camel case", original: "AaaBbbCcc", max: 8, want: "Aaa Bbb C"},
+		{name: "Partial abbreviation with camel case, start from the front", original: "AaaBbbCcc", max: 8, frmFront: true, want: "A Bbb Ccc"},
+		{name: "Doesn't match wrong casing", original: "AaaBBbCcc", max: 0, want: "A B Bb C"},
+		{name: "Mixed camel case and non word separators", original: "AaaBbb-ccc", max: 0, want: "A B C"},
+		{name: "Mixed camel case and non word separators with same borders", original: "Aaa-Bbb-Ccc", max: 0, want: "A B C"},
+		{name: "Real example, full short", original: "strategy-limited", max: 0, want: "Stg Ltd"},
+		{name: "Real example, shorter than total", original: "strategy-limited", max: 13, want: "Strategy Ltd"},
+		{name: "Real example, shorter than total, start from the front", original: "strategy-limited", max: 13, frmFront: true, want: "Stg Limited"},
+		{name: "Real example, max same as shorted", original: "strategy-limited", max: 12, want: "Strategy Ltd"},
+		{name: "Real example, max same as shorted", original: "strategy-limited", max: 12, frmFront: true, want: "Stg Limited"},
+		{name: "Real example, max on separator", original: "strategy-limited", max: 9, want: "Stg Ltd"},
+		{name: "Real example, max shorter than first word", original: "strategy-limited", max: 6, want: "Stg Ltd"},
+		{name: "Real example, no short", original: "strategy-limited", max: 99, want: "Strategy Limited"},
+		{name: "Real example, with numbers #1", original: "strategy-limited99", max: 15, want: "Strategy Ltd 9 9"},
+		{name: "Real example, with numbers #2", original: "strategy-limited-99", max: 15, want: "Strategy Ltd 9 9"},
+		{name: "Real example, with numbers #1, start from the front", original: "strategy-limited99", max: 15, frmFront: true, want: "Stg Limited 9 9"},
+		{name: "Real example, with numbers #2, start from the front", original: "strategy-limited-99", max: 15, frmFront: true, want: "Stg Limited 9 9"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ToTitle(matcher, tt.original, tt.max, tt.frmFront, tt.rmvStop); got != tt.want {
+				t.Errorf("AsPascal('%s', %d) = '%v', want '%v'", tt.original, tt.max, got, tt.want)
+			}
+		})
+	}
+}

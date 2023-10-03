@@ -28,21 +28,9 @@ var titleCmd = &cobra.Command{
 	Long:  `Abbreviate a string and convert it to title case.`,
 	Args:  validateArgPresent,
 	Run: func(cmd *cobra.Command, args []string) {
-		abbr := domain.AsPascal(abbreviator, args[0], optMax, optFrmFront, optRemoveStopwords)
+		abbr := domain.ToTitle(abbreviator, args[0], optMax, optFrmFront, optRemoveStopwords)
 
-		if len(abbr) > 0 {
-			s := string(abbr[0])
-			for i := 1; i < len(abbr); i++ {
-				if string(abbr[i]) == strings.ToUpper(string(abbr[i])) {
-					s += " "
-				}
-				s += string(abbr[i])
-			}
-
-			fmt.Printf("%s", s)
-
-		}
-
+		fmt.Printf("%s", abbr)
 		if optNewline {
 			fmt.Printf("\n")
 		}
