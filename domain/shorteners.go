@@ -282,3 +282,24 @@ func shorten(sequences Sequences, max int, frmFront bool, shorten func(int)) Seq
 	}
 	return sequences
 }
+
+func ToTitle(abbr Abbreviator, original string, max int, frmFront bool, rmvStop bool) string {
+	if original == "" {
+		return ""
+	}
+
+	ab := AsPascal(abbr, original, max, frmFront, rmvStop)
+	s := ab
+
+	if len(ab) > 0 {
+		s = string(ab[0])
+		for i := 1; i < len(ab); i++ {
+			if string(ab[i]) == strings.ToUpper(string(ab[i])) {
+				s += " "
+			}
+			s += string(ab[i])
+		}
+	}
+
+	return s
+}
